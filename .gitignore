@@ -1,0 +1,11 @@
+node_modules
+.next
+.env*
+!*.example
+dist-seed
+*.tsbuildinfo
+
+# Google Cloud Service Account Keys
+astral-adapter*.json
+*-*.json
+*service-account*.json
