@@ -22,7 +22,9 @@ export default async function EditProductPage({ params }: { params: { id: string
 
   const serialized = {
     ...product,
+    // @ts-ignore
     _id:        product._id.toString(),
+    // @ts-ignore
     shop_id:    product.shop_id.toString(),
     created_at: product.created_at.toISOString(),
     updated_at: product.updated_at.toISOString(),
