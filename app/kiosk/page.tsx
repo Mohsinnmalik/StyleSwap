@@ -16,6 +16,10 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
   const [code, setCode] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const TRYON_URL = 'https://style-swap-eight.vercel.app/shop/fashon-culture/tryon';
+  const KIOSK_URL = 'https://style-swap-eight.vercel.app/kiosk';
+  const qrSrc = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(TRYON_URL)}&choe=UTF-8`;
+
   useEffect(() => { inputRef.current?.focus(); }, []);
 
   const submit = () => {
@@ -23,7 +27,7 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-10 px-10">
+    <div className="flex flex-col items-center justify-center h-full gap-8 px-10">
       <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-6">
           <div className="w-4 h-4 bg-styleswap-accent rounded-full animate-pulse" />
@@ -34,12 +38,26 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
         <p className="text-styleswap-muted text-2xl">AI-powered fashion preview</p>
       </div>
 
-      <div className="w-px h-16 bg-gradient-to-b from-transparent via-styleswap-accent to-transparent" />
+      <div className="flex items-start gap-16">
+        {/* QR Code panel */}
+        <div className="flex flex-col items-center gap-4">
+          <div className="bg-white p-4 rounded-2xl shadow-2xl border-4 border-white">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={qrSrc} alt="Try-On QR Code" width={180} height={180} />
+          </div>
+          <div className="text-center">
+            <p className="text-styleswap-accent text-sm font-bold uppercase tracking-widest mb-1">📱 Scan to Try On</p>
+            <p className="text-styleswap-muted text-xs max-w-[200px] text-center leading-relaxed">{TRYON_URL}</p>
+          </div>
+        </div>
 
-      <div className="w-full max-w-md flex flex-col gap-5">
-        <p className="text-styleswap-muted text-center text-xl">Enter the code shown on your phone</p>
+        <div className="w-px self-stretch bg-gradient-to-b from-transparent via-styleswap-accent to-transparent" />
 
-        <div className="relative z-10">
+        {/* Code input panel */}
+        <div className="flex flex-col gap-5 w-80">
+          <p className="text-styleswap-muted text-xl text-center">Or enter your code</p>
+
+          <div className="relative z-10">
           <input
             ref={inputRef}
             id="kiosk-code-input"
@@ -51,39 +69,40 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
             onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             onKeyDown={(e) => e.key === 'Enter' && submit()}
             placeholder="_ _ _ _ _ _"
-            className="w-full relative z-20 bg-styleswap-surface border-2 border-styleswap-border rounded-3xl
-                       text-white text-5xl font-bold text-center tracking-[0.5em] tabular-nums
-                       py-8 px-6 outline-none placeholder-styleswap-border
-                       focus:border-styleswap-accent focus:bg-styleswap-surface2 transition-all duration-200 cursor-text pointer-events-auto"
+            className="w-full relative z-20 bg-black border-4 border-styleswap-border rounded-3xl
+                       text-[#ffde59] text-5xl font-extrabold text-center tracking-[0.5em] tabular-nums
+                       py-8 px-6 outline-none placeholder-gray-600 shadow-lg
+                       focus:border-styleswap-accent transition-all duration-200 cursor-text pointer-events-auto"
             autoComplete="off"
           />
           {code.length > 0 && code.length < 6 && (
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none z-30">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < code.length ? 'bg-styleswap-accent' : 'bg-styleswap-border'}`} />
+                <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < code.length ? 'bg-styleswap-accent' : 'bg-gray-600'}`} />
               ))}
             </div>
           )}
         </div>
 
-        <button
-          id="kiosk-view-result-btn"
-          type="button"
-          onClick={submit}
-          disabled={code.length !== 6}
-          className={`w-full py-6 rounded-3xl text-2xl font-bold transition-all duration-200 ${
-            code.length === 6
-              ? 'bg-styleswap-accent hover:bg-styleswap-accent-hover text-white shadow-2xl shadow-blue-600/30 hover:scale-[1.01]'
-              : 'bg-styleswap-surface text-styleswap-subtle cursor-not-allowed'
-          }`}
-        >
-          View Look
-        </button>
-      </div>
+          <button
+            id="kiosk-view-result-btn"
+            type="button"
+            onClick={submit}
+            disabled={code.length !== 6}
+            className={`w-full py-6 rounded-3xl text-2xl font-bold transition-all duration-200 ${
+              code.length === 6
+                ? 'bg-styleswap-accent hover:bg-styleswap-accent-hover text-white shadow-2xl shadow-blue-600/30 hover:scale-[1.01]'
+                : 'bg-styleswap-surface text-styleswap-subtle cursor-not-allowed'
+            }`}
+          >
+            View Look
+          </button>
 
-      <p className="text-styleswap-subtle text-base text-center mt-4">
-        Scan the QR code at the counter to upload your photos and receive a code
-      </p>
+          <p className="text-styleswap-subtle text-sm text-center">
+            Kiosk URL: <span className="text-styleswap-muted">{KIOSK_URL}</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -123,6 +142,9 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
   code: string; imageUrl: string; expiresAt: Date; onReset: () => void;
 }) {
   const [timeLeft, setTimeLeft] = useState(() => expiresAt.getTime() - Date.now());
+  const urls = imageUrl.split(',').filter(Boolean);
+  const [idx, setIdx] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -133,29 +155,76 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
     return () => clearInterval(tick);
   }, [expiresAt, onReset]);
 
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const index = Math.round(el.scrollLeft / el.clientWidth);
+    if (index !== idx) setIdx(index);
+  };
+
+  const scrollTo = (newIdx: number) => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollTo({ left: newIdx * scrollRef.current.clientWidth, behavior: 'smooth' });
+    setIdx(newIdx);
+  };
+
   return (
-    <div className="relative h-full">
-      {/* Full-screen image */}
-      <div className="absolute inset-0 flex items-center justify-center bg-black">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={imageUrl} alt="Virtual try-on result" className="max-h-screen max-w-full object-contain" />
+    <div className="relative h-full bg-black">
+      {/* Full-screen scrollable image gallery */}
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
+      >
+        {urls.map((url, i) => (
+          <div key={url} className="w-full h-full flex-shrink-0 snap-center flex items-center justify-center relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt={`Look ${i + 1}`} className="max-h-screen max-w-full object-contain" />
+          </div>
+        ))}
       </div>
 
+      {/* Navigation Arrows */}
+      {urls.length > 1 && (
+        <>
+          <button 
+            onClick={() => scrollTo(Math.max(0, idx - 1))}
+            disabled={idx === 0}
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-styleswap-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          <button 
+            onClick={() => scrollTo(Math.min(urls.length - 1, idx + 1))}
+            disabled={idx === urls.length - 1}
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-styleswap-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </>
+      )}
+
       {/* Top gradient */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/70 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none z-20" />
 
       {/* StyleSwap top label */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
-        <div className="w-2.5 h-2.5 bg-styleswap-accent rounded-full" />
-        <span className="text-white text-sm font-bold uppercase tracking-widest opacity-80">StyleSwap Result</span>
-        <div className="w-2.5 h-2.5 bg-styleswap-accent rounded-full" />
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30">
+        {urls.length > 1 && (
+          <div className="bg-[#ffde59] text-black text-xs font-black px-3 py-1 uppercase tracking-widest rounded-full shadow-lg">
+            Look {idx + 1} of {urls.length}
+          </div>
+        )}
+        <div className="flex items-center gap-2 mt-1">
+          <div className="w-2.5 h-2.5 bg-styleswap-accent rounded-full" />
+          <span className="text-white text-sm font-bold uppercase tracking-widest opacity-80 shadow-black drop-shadow-md">StyleSwap Result</span>
+          <div className="w-2.5 h-2.5 bg-styleswap-accent rounded-full" />
+        </div>
       </div>
 
       {/* Bottom gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-20" />
 
       {/* Bottom overlay */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 z-30">
         <div className="bg-black/70 backdrop-blur-sm border border-styleswap-border/50 rounded-2xl px-6 py-4 text-right">
           <p className="text-styleswap-subtle text-xs mb-1">Code</p>
           <p className="text-white font-bold text-2xl tabular-nums tracking-widest">{code}</p>

@@ -42,14 +42,17 @@ export async function POST(request: NextRequest) {
   try { formData = await request.formData(); }
   catch { return NextResponse.json({ error: 'Invalid form data.' }, { status: 400 }); }
 
-  const shopId       = formData.get('shop_id') as string;
-  const productId    = formData.get('product_id') as string | null;
-  const personImage  = formData.get('person_image');
-  const clothImageF  = formData.get('cloth_image');
+  const shopId          = formData.get('shop_id') as string;
+  const multiProductIds = formData.getAll('product_ids') as string[];
+  const singleProductId = formData.get('product_id') as string | null;
+  const personImage     = formData.get('person_image');
+  const clothImageF     = formData.get('cloth_image');
+
+  const productIds = multiProductIds.length > 0 ? multiProductIds : (singleProductId ? [singleProductId] : []);
 
   if (!shopId) return NextResponse.json({ error: 'shop_id is required.' }, { status: 400 });
-  if (!(personImage instanceof File)) return NextResponse.json({ error: 'Both images are required.' }, { status: 400 });
-  if (!productId && !(clothImageF instanceof File)) return NextResponse.json({ error: 'Both images are required.' }, { status: 400 });
+  if (!(personImage instanceof File)) return NextResponse.json({ error: 'Person image is required.' }, { status: 400 });
+  if (productIds.length === 0 && !(clothImageF instanceof File)) return NextResponse.json({ error: 'Cloth is required.' }, { status: 400 });
 
   const personErr = validateFile(personImage);
   if (personErr) return NextResponse.json({ error: personErr }, { status: 400 });
@@ -71,20 +74,24 @@ export async function POST(request: NextRequest) {
     const date      = new Date().toISOString().slice(0, 10);
     const { url: personUrl, public_id: personPubId } = await uploadImage(personBuf, `tryon-sessions/${date}`);
 
-    // Determine cloth image URL
-    let clothImageUrl: string;
+    // Determine cloth image URLs
+    let clothImageUrls: string[] = [];
     let clothPublicId: string | null = null;
+    let firstProductId: string | undefined = undefined;
 
-    if (productId) {
-      // Use product primary image
-      const product = await Product.findById(productId).lean() as unknown as IProduct | null;
-      if (!product) return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
-      clothImageUrl = product.images.find((i) => i.is_primary)?.url ?? product.images[0]?.url ?? '';
+    if (productIds.length > 0) {
+      // Use product primary images
+      const products = await Product.find({ _id: { $in: productIds } }).lean() as unknown as IProduct[];
+      if (!products || products.length === 0) return NextResponse.json({ error: 'Products not found.' }, { status: 404 });
+      
+      // Keep them in the order requested if possible, or just map what we found
+      clothImageUrls = products.map((p) => p.images.find((i) => i.is_primary)?.url ?? p.images[0]?.url ?? '');
+      firstProductId = products[0]._id.toString();
     } else {
       // Upload own cloth image
       const clothBuf = Buffer.from(await (clothImageF as File).arrayBuffer());
       const { url, public_id } = await uploadImage(clothBuf, `tryon-sessions/${date}`);
-      clothImageUrl = url;
+      clothImageUrls = [url];
       clothPublicId = public_id;
     }
 
@@ -97,9 +104,9 @@ export async function POST(request: NextRequest) {
       shop_id:       new mongoose.Types.ObjectId(shopId),
       person_image:  { url: personUrl, public_id: personPubId },
       cloth_source: {
-        type:       productId ? 'catalogue' : 'upload',
-        product_id: productId ? new mongoose.Types.ObjectId(productId) : undefined,
-        image_url:  clothImageUrl,
+        type:       firstProductId ? 'catalogue' : 'upload',
+        product_id: firstProductId ? new mongoose.Types.ObjectId(firstProductId) : undefined,
+        image_url:  clothImageUrls[0],
         public_id:  clothPublicId ?? undefined,
       },
       status:     'processing',
@@ -108,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     // Return code immediately — fire-and-forget background generation
     // In production on Vercel, use waitUntil() from @vercel/functions
-    generateTryOnImage(code, personUrl, clothImageUrl).catch((err) =>
+    generateTryOnImage(code, personUrl, clothImageUrls).catch((err) =>
       console.error(`[tryon] Vertex AI Background generation failed for ${code}:`, err)
     );
 

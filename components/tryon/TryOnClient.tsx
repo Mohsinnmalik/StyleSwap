@@ -18,6 +18,7 @@ interface Props {
   shopSlug:            string;
   shopId:              string;
   preselectedProduct:  PreselectedProduct | null;
+  multiProducts:       PreselectedProduct[] | null;
 }
 
 function validateFile(file: File): string | null {
@@ -104,7 +105,7 @@ function UploadZone({
   );
 }
 
-export default function TryOnClient({ shopSlug, shopId, preselectedProduct }: Props) {
+export default function TryOnClient({ shopSlug, shopId, preselectedProduct, multiProducts }: Props) {
   const router = useRouter();
 
   const [personFile,    setPersonFile]    = useState<File | null>(null);
@@ -136,18 +137,24 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct }: Pr
     }
   }, []);
 
-  const canSubmit = !!personFile && (!!preselectedProduct || !!clothFile) && !submitting;
+  // Multi-mode: one product per person photo
+  const isMultiMode = !!multiProducts && multiProducts.length > 1;
+
+  const canSubmit = !!personFile && (!!preselectedProduct || isMultiMode || !!clothFile) && !submitting;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
     setSubmitting(true);
     setSubmitError(null);
 
+    // Append selected product(s) or uploaded cloth
     const fd = new FormData();
-    fd.append('shop_id',      shopId);
+    fd.append('shop_id', shopId);
     fd.append('person_image', personFile!);
 
-    if (preselectedProduct) {
+    if (isMultiMode && multiProducts) {
+      multiProducts.forEach((prod) => fd.append('product_ids', prod._id));
+    } else if (preselectedProduct) {
       fd.append('product_id', preselectedProduct._id);
     } else {
       fd.append('cloth_image', clothFile!);
@@ -162,6 +169,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct }: Pr
       return;
     }
 
+    // Always route to single session page (which now supports one code with multiple results)
     router.push(`/shop/${shopSlug}/session?code=${data.code}`);
   };
 
@@ -185,7 +193,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct }: Pr
     <div className="min-h-screen bg-styleswap-bg text-styleswap-text pb-24 font-sans">
       
       {/* Centered Mobile-like container for desktop */}
-      <div className="max-w-md mx-auto w-full min-h-screen flex flex-col relative bg-styleswap-surface border-x-4 border-styleswap-border shadow-neo">
+      <div className="max-w-4xl mx-auto w-full min-h-screen flex flex-col relative bg-styleswap-surface border-x-4 border-styleswap-border shadow-neo">
         
         {/* Sticky Header */}
         <header className="sticky top-0 z-20 px-5 pt-8 pb-4 flex items-center justify-between bg-styleswap-bg border-b-4 border-styleswap-border shadow-neo-sm">
@@ -204,7 +212,25 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct }: Pr
 
         <div className="px-5 pt-8 pb-10 flex flex-col gap-10 flex-1">
           
-          {/* Pre-selected product banner */}
+          {/* Multi-product banner */}
+          {isMultiMode && multiProducts && (
+            <div className="card p-4 bg-[#ffffff]">
+              <p className="text-styleswap-accent text-xs uppercase font-black tracking-widest mb-2 border-b-2 border-black inline-block">Trying {multiProducts.length} Items</p>
+              <div className="flex gap-3 overflow-x-auto">
+                {multiProducts.map((prod) => {
+                  const img = prod.images.find((i) => i.is_primary)?.url ?? prod.images[0]?.url ?? '';
+                  return (
+                    <div key={prod._id} className="flex-shrink-0 flex flex-col items-center gap-1">
+                      {img && <div className="w-14 h-14 border-4 border-black shadow-neo-sm overflow-hidden"><Image src={img} alt={prod.name} width={56} height={56} className="w-full h-full object-cover" /></div>}
+                      <p className="text-black text-xs font-black uppercase text-center max-w-[56px] truncate">{prod.name}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Pre-selected product banner (single mode) */}
           {preselectedProduct && (
             <div className="card p-4 flex items-center gap-4 bg-[#ffffff]">
               {productImg && (
@@ -296,7 +322,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct }: Pr
             <p className="text-center text-styleswap-border text-sm font-black uppercase tracking-wider mt-4">
               {!personFile
                 ? 'Upload photo to continue'
-                : !preselectedProduct && !clothFile
+                : !preselectedProduct && !isMultiMode && !clothFile
                 ? 'Upload garment to continue'
                 : ''}
             </p>

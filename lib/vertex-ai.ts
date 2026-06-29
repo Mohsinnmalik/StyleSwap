@@ -51,77 +51,66 @@ async function fetchImageAsBase64(url: string): Promise<{ data: string; mimeType
 export async function generateTryOnImage(
   sessionCode: string,
   personImageUrl: string,
-  clothImageUrl: string
+  clothImageUrls: string[]
 ): Promise<void> {
   try {
-    console.log(`[vertex-ai] Starting virtual try-on session ${sessionCode}`);
+    console.log(`[vertex-ai] Starting virtual try-on session ${sessionCode} for ${clothImageUrls.length} items`);
     
-    // 1. Fetch images and convert to Base64
+    // 1. Fetch person image
     const personImage = await fetchImageAsBase64(personImageUrl);
-    const clothImage = await fetchImageAsBase64(clothImageUrl);
-
-    // 2. Determine the model from environment (must be a virtual-try-on model)
     const modelName = process.env.VERTEX_AI_MODEL || 'virtual-try-on-001';
 
-    // 3. Call the official Vertex AI Virtual Try-On endpoint
-    console.log(`[vertex-ai] Calling ${modelName}...`);
-    const response = await ai.models.recontextImage({
-      model: modelName,
-      source: {
-        personImage: {
-          imageBytes: personImage.data,
-          mimeType: personImage.mimeType,
-        },
-        productImages: [
-          {
-            productImage: {
-              imageBytes: clothImage.data,
-              mimeType: clothImage.mimeType,
-            },
+    // 2. Map over cloth images and run vertex AI in parallel
+    const finalImageUrls = await Promise.all(clothImageUrls.map(async (clothUrl) => {
+      const clothImage = await fetchImageAsBase64(clothUrl);
+      console.log(`[vertex-ai] Calling ${modelName} for an item...`);
+      const response = await ai.models.recontextImage({
+        model: modelName,
+        source: {
+          personImage: {
+            imageBytes: personImage.data,
+            mimeType: personImage.mimeType,
           },
-        ],
-      },
-      config: { 
-        numberOfImages: 1,
-        baseSteps: 75 // Higher sampling steps to strictly preserve the face, body figure, and fabric precision
-      },
-    });
+          productImages: [
+            {
+              productImage: {
+                imageBytes: clothImage.data,
+                mimeType: clothImage.mimeType,
+              },
+            },
+          ],
+        },
+        config: { 
+          numberOfImages: 1,
+          baseSteps: 75 
+        },
+      });
 
-    // 4. Extract the generated image Base64 bytes
-    const base64Data = response.generatedImages?.[0]?.image?.imageBytes;
-    if (!base64Data) {
-      throw new Error('Vertex AI did not return generated image bytes in the response.');
-    }
+      const base64Data = response.generatedImages?.[0]?.image?.imageBytes;
+      if (!base64Data) throw new Error('Vertex AI did not return generated image bytes.');
 
-    // 5. Upload the generated Base64 image to Cloudinary
-    console.log(`[vertex-ai] Image generated. Uploading to Cloudinary...`);
-    const dataUri = `data:image/jpeg;base64,${base64Data}`;
-    const date = new Date().toISOString().slice(0, 10);
-    const { url: finalImageUrl } = await uploadImage(dataUri, `tryon-sessions/results/${date}`);
+      const dataUri = `data:image/jpeg;base64,${base64Data}`;
+      const date = new Date().toISOString().slice(0, 10);
+      const { url: finalImageUrl } = await uploadImage(dataUri, `tryon-sessions/results/${date}`);
+      return finalImageUrl;
+    }));
 
-    // 6. Update the session in MongoDB
+    // 3. Update the session in MongoDB with comma-separated URLs
     console.log(`[vertex-ai] Updating MongoDB for session ${sessionCode}`);
     await connectDB();
     await TryonSession.findOneAndUpdate(
       { session_code: sessionCode },
-      { status: 'done', result_image_url: finalImageUrl }
+      { status: 'done', result_image_url: finalImageUrls.join(',') }
     );
     console.log(`[vertex-ai] Session ${sessionCode} completed successfully!`);
 
   } catch (err: any) {
-    // 7. Comprehensive Error Logging
     console.error(`[vertex-ai] Failed to generate/update session ${sessionCode}:`);
     if (err.status) {
       console.error(`  -> Status Code: ${err.status}`);
-      if (err.status === 400) console.error(`  -> Reason: INVALID_ARGUMENT. Check image formatting, size, or payload schema.`);
-      if (err.status === 401) console.error(`  -> Reason: UNAUTHENTICATED. Service Account JSON is invalid or missing.`);
-      if (err.status === 403) console.error(`  -> Reason: PERMISSION_DENIED. Missing IAM roles (Vertex AI User) or API not enabled.`);
-      if (err.status === 404) console.error(`  -> Reason: NOT_FOUND. Model ${process.env.VERTEX_AI_MODEL} not found in this region or requires allowlisting.`);
-      if (err.status === 429) console.error(`  -> Reason: QUOTA_EXCEEDED. You have hit your Vertex AI rate limits.`);
     }
     console.error(`  -> Details:`, err.message || err);
     
-    // Fallback to a placeholder image if Vertex AI generation fails to prevent crashing the Kiosk
     try {
       await connectDB();
       const placeholder = `https://placehold.co/600x900/0A0A0A/3B82F6?text=Vertex+AI+Error`;
@@ -129,7 +118,6 @@ export async function generateTryOnImage(
         { session_code: sessionCode },
         { status: 'done', result_image_url: placeholder }
       );
-      console.log(`[vertex-ai] Session ${sessionCode} saved with fallback error image.`);
     } catch (dbErr) {
       console.error(`[vertex-ai] Failed to update session ${sessionCode} to fallback status:`, dbErr);
     }
