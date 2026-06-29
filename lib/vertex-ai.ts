@@ -2,6 +2,19 @@ import { GoogleGenAI } from '@google/genai';
 import { connectDB } from '@/lib/mongodb';
 import { TryonSession } from '@/models/TryonSession';
 import { uploadImage } from '@/lib/cloudinary';
+import fs from 'fs';
+import path from 'path';
+
+// Serverless Deployment Fix: Vercel does not allow uploading JSON files securely.
+// If GOOGLE_CREDENTIALS (the raw JSON string) is provided in the environment variables,
+// write it to a temporary file and point the SDK to it.
+if (process.env.GOOGLE_CREDENTIALS) {
+  const tmpKeyPath = path.join('/tmp', 'google-credentials.json');
+  if (!fs.existsSync(tmpKeyPath)) {
+    fs.writeFileSync(tmpKeyPath, process.env.GOOGLE_CREDENTIALS);
+  }
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = tmpKeyPath;
+}
 
 // Initialize the Google Gen AI SDK
 // It automatically uses GOOGLE_APPLICATION_CREDENTIALS for authentication

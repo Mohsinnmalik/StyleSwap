@@ -17,7 +17,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   }
 
   await connectDB();
-  const product = await Product.findOne({ _id: params.id, shop_id: shopId }).lean();
+  const product = await Product.findOne({ _id: params.id, shop_id: shopId }).lean() as any;
   if (!product) notFound();
 
   const serialized = {
