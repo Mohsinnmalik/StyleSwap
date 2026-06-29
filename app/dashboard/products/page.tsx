@@ -15,7 +15,7 @@ export default async function ProductsPage() {
   let products: any[] = [];
   if (shopId && mongoose.Types.ObjectId.isValid(shopId)) {
     await connectDB();
-    products = await Product.find({ shop_id: shopId }).sort({ created_at: -1 }).lean();
+    products = await Product.find({ shop_id: shopId }).sort({ created_at: -1 }).lean() as any[];
   }
 
   const serialized = products.map((p) => ({
