@@ -22,22 +22,26 @@ export default function ShopSettingsClient({ shop }: { shop: ShopData | null }) 
   const fileRef = useRef<HTMLInputElement>(null);
   const qrRef   = useRef<HTMLCanvasElement>(null);
 
-  const shopUrl = shop
-    ? `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/shop/${shop.slug}`
-    : '';
+  const [shopUrl, setShopUrl] = useState('');
+
+  useEffect(() => {
+    if (shop) {
+      setShopUrl(`${window.location.origin}/shop/${shop.slug}`);
+    }
+  }, [shop]);
 
   // Generate QR code when mounted
   useEffect(() => {
-    if (!shop?.slug || !qrRef.current) return;
+    if (!shopUrl || !qrRef.current) return;
     import('qrcode').then((m: any) => {
       const qrcode = m.default || m;
       qrcode.toCanvas(qrRef.current!, shopUrl, {
         width: 240,
-        color: { dark: '#FFFFFF', light: '#141414' },
+        color: { dark: '#000000', light: '#FFFFFF' }, // Better scanning contrast
         errorCorrectionLevel: 'H',
       });
     });
-  }, [shop?.slug, shopUrl]);
+  }, [shopUrl]);
 
   const handleLogoFile = (file: File) => {
     setLogoFile(file);
