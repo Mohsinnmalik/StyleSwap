@@ -57,12 +57,12 @@ export default function ProductListClient({ initialProducts }: { initialProducts
   if (products.length === 0) {
     return (
       <div className="card flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 bg-styleswap-surface2 rounded-2xl flex items-center justify-center">
-          <svg className="w-8 h-8 text-styleswap-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 bg-tryonity-surface2 rounded-2xl flex items-center justify-center">
+          <svg className="w-8 h-8 text-tryonity-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
-        <p className="text-styleswap-muted text-sm">No products yet</p>
+        <p className="text-tryonity-muted text-sm">No products yet</p>
         <Link href="/dashboard/products/new" className="btn-primary !w-auto px-6 py-3 text-sm mt-2">
           Add your first product
         </Link>
@@ -71,11 +71,11 @@ export default function ProductListClient({ initialProducts }: { initialProducts
   }
 
   return (
-    <div className="card divide-y divide-styleswap-border">
+    <div className="card divide-y divide-tryonity-border">
       {products.map((product) => (
-        <div key={product._id} className="flex items-center gap-4 p-4 hover:bg-styleswap-surface2/50 transition-colors">
+        <div key={product._id} className="flex items-center gap-4 p-4 hover:bg-tryonity-surface2/50 transition-colors">
           {/* Thumbnail */}
-          <div className="w-14 h-14 rounded-xl overflow-hidden bg-styleswap-surface2 flex-shrink-0">
+          <div className="w-14 h-14 rounded-xl overflow-hidden bg-tryonity-surface2 flex-shrink-0">
             {primaryImg(product) ? (
               <Image
                 src={primaryImg(product)}
@@ -86,7 +86,7 @@ export default function ProductListClient({ initialProducts }: { initialProducts
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-styleswap-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-tryonity-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -97,9 +97,9 @@ export default function ProductListClient({ initialProducts }: { initialProducts
           <div className="flex-1 min-w-0">
             <p className="text-white font-medium text-sm truncate">{product.name}</p>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-styleswap-subtle text-xs capitalize">{product.category}</span>
-              <span className="text-styleswap-border">·</span>
-              <span className="text-styleswap-muted text-xs font-medium">{formatPrice(product.price)}</span>
+              <span className="text-tryonity-subtle text-xs capitalize">{product.category}</span>
+              <span className="text-tryonity-border">·</span>
+              <span className="text-tryonity-muted text-xs font-medium">{formatPrice(product.price)}</span>
             </div>
           </div>
 
@@ -107,7 +107,7 @@ export default function ProductListClient({ initialProducts }: { initialProducts
           <button
             onClick={() => handleToggle(product._id, product.is_active)}
             className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${
-              product.is_active ? 'bg-styleswap-accent' : 'bg-styleswap-border'
+              product.is_active ? 'bg-tryonity-accent' : 'bg-tryonity-border'
             }`}
             title={product.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}
           >

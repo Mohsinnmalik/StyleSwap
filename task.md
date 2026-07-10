@@ -1,8 +1,8 @@
-# StyleSwap Build — Task Tracker
+# Tryonity Build — Task Tracker
 
 ## Phase 1 — Project Scaffold
 - [x] Run create-next-app@14
-- [x] Apply StyleSwap Tailwind design tokens
+- [x] Apply Tryonity Tailwind design tokens
 - [x] Set up Google Fonts (Inter) in layout
 - [x] Configure tsconfig strict mode + path aliases
 - [x] Create .env.local template

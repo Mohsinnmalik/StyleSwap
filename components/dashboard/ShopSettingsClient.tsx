@@ -77,7 +77,7 @@ export default function ShopSettingsClient({ shop }: { shop: ShopData | null }) 
     const canvas = qrRef.current;
     if (!canvas) return;
     const link = document.createElement('a');
-    link.download = `${shop?.slug ?? 'styleswap'}-qr.png`;
+    link.download = `${shop?.slug ?? 'tryonity'}-qr.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
@@ -93,13 +93,13 @@ export default function ShopSettingsClient({ shop }: { shop: ShopData | null }) 
           <label className="label">Shop Logo</label>
           <div className="flex items-center gap-4">
             <div
-              className="w-16 h-16 rounded-2xl bg-styleswap-surface2 border border-styleswap-border overflow-hidden flex items-center justify-center cursor-pointer hover:border-styleswap-accent/50 transition-colors"
+              className="w-16 h-16 rounded-2xl bg-tryonity-surface2 border border-tryonity-border overflow-hidden flex items-center justify-center cursor-pointer hover:border-tryonity-accent/50 transition-colors"
               onClick={() => fileRef.current?.click()}
             >
               {logoPreview ? (
                 <Image src={logoPreview} alt="Logo" width={64} height={64} className="w-full h-full object-cover" />
               ) : (
-                <svg className="w-7 h-7 text-styleswap-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-7 h-7 text-tryonity-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 </svg>
               )}
@@ -108,7 +108,7 @@ export default function ShopSettingsClient({ shop }: { shop: ShopData | null }) 
               <button type="button" onClick={() => fileRef.current?.click()} className="btn-ghost text-sm px-3 py-1.5">
                 Change logo
               </button>
-              <p className="text-styleswap-subtle text-xs mt-1">PNG, JPG or WebP · Max 5MB</p>
+              <p className="text-tryonity-subtle text-xs mt-1">PNG, JPG or WebP · Max 5MB</p>
             </div>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleLogoFile(e.target.files[0])} />
           </div>
@@ -128,10 +128,10 @@ export default function ShopSettingsClient({ shop }: { shop: ShopData | null }) 
         <div>
           <label className="label">Shop URL Slug</label>
           <div className="flex items-center input-field opacity-60 gap-2">
-            <span className="text-styleswap-subtle text-sm">/shop/</span>
-            <span className="text-styleswap-muted text-sm">{shop?.slug ?? '—'}</span>
+            <span className="text-tryonity-subtle text-sm">/shop/</span>
+            <span className="text-tryonity-muted text-sm">{shop?.slug ?? '—'}</span>
           </div>
-          <p className="text-styleswap-subtle text-xs mt-1.5">Slug is permanent and cannot be changed after creation.</p>
+          <p className="text-tryonity-subtle text-xs mt-1.5">Slug is permanent and cannot be changed after creation.</p>
         </div>
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -145,16 +145,16 @@ export default function ShopSettingsClient({ shop }: { shop: ShopData | null }) 
       {shop && (
         <div className="card p-6">
           <h2 className="section-title mb-1">Customer QR Code</h2>
-          <p className="text-styleswap-muted text-sm mb-6">Customers scan this to access your shop and try on clothes.</p>
+          <p className="text-tryonity-muted text-sm mb-6">Customers scan this to access your shop and try on clothes.</p>
 
           <div className="flex flex-col items-center gap-5">
-            <div className="p-4 bg-styleswap-surface2 rounded-3xl border border-styleswap-border">
+            <div className="p-4 bg-tryonity-surface2 rounded-3xl border border-tryonity-border">
               <canvas ref={qrRef} className="rounded-xl" />
             </div>
 
-            <div className="w-full bg-styleswap-surface2 rounded-xl px-4 py-3 text-center">
-              <p className="text-styleswap-subtle text-xs mb-1">Shop URL</p>
-              <p className="text-styleswap-accent text-sm font-medium break-all">{shopUrl}</p>
+            <div className="w-full bg-tryonity-surface2 rounded-xl px-4 py-3 text-center">
+              <p className="text-tryonity-subtle text-xs mb-1">Shop URL</p>
+              <p className="text-tryonity-accent text-sm font-medium break-all">{shopUrl}</p>
             </div>
 
             <button onClick={downloadQR} className="btn-primary !w-auto px-8">

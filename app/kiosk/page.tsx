@@ -44,12 +44,12 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
     <div className="flex flex-col items-center justify-center h-full gap-8 px-10">
       <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="w-4 h-4 bg-styleswap-accent rounded-full animate-pulse" />
-          <span className="text-styleswap-accent text-sm font-bold uppercase tracking-[0.35em]">StyleSwap</span>
-          <div className="w-4 h-4 bg-styleswap-accent rounded-full animate-pulse" />
+          <div className="w-4 h-4 bg-tryonity-accent rounded-full animate-pulse" />
+          <span className="text-tryonity-accent text-sm font-bold uppercase tracking-[0.35em]">Tryonity</span>
+          <div className="w-4 h-4 bg-tryonity-accent rounded-full animate-pulse" />
         </div>
         <h1 className="text-white text-7xl font-extrabold tracking-tight leading-none mb-4">Virtual Try-On</h1>
-        <p className="text-styleswap-muted text-2xl">AI-powered fashion preview</p>
+        <p className="text-tryonity-muted text-2xl">AI-powered fashion preview</p>
       </div>
 
       <div className="flex items-start gap-16">
@@ -64,16 +64,16 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
             )}
           </div>
           <div className="text-center">
-            <p className="text-styleswap-accent text-sm font-bold uppercase tracking-widest mb-1">📱 Scan to Try On</p>
-            <p className="text-styleswap-muted text-xs max-w-[200px] text-center leading-relaxed">{tryonUrl}</p>
+            <p className="text-tryonity-accent text-sm font-bold uppercase tracking-widest mb-1">📱 Scan to Try On</p>
+            <p className="text-tryonity-muted text-xs max-w-[200px] text-center leading-relaxed">{tryonUrl}</p>
           </div>
         </div>
 
-        <div className="w-px self-stretch bg-gradient-to-b from-transparent via-styleswap-accent to-transparent" />
+        <div className="w-px self-stretch bg-gradient-to-b from-transparent via-tryonity-accent to-transparent" />
 
         {/* Code input panel */}
         <div className="flex flex-col gap-5 w-80">
-          <p className="text-styleswap-muted text-xl text-center">Or enter your code</p>
+          <p className="text-tryonity-muted text-xl text-center">Or enter your code</p>
 
           <div className="relative z-10">
           <input
@@ -87,16 +87,16 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
             onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             onKeyDown={(e) => e.key === 'Enter' && submit()}
             placeholder="_ _ _ _ _ _"
-            className="w-full relative z-20 bg-black border-4 border-styleswap-border rounded-3xl
+            className="w-full relative z-20 bg-black border-4 border-tryonity-border rounded-3xl
                        text-[#ffde59] text-5xl font-extrabold text-center tracking-[0.5em] tabular-nums
                        py-8 px-6 outline-none placeholder-gray-600 shadow-lg
-                       focus:border-styleswap-accent transition-all duration-200 cursor-text pointer-events-auto"
+                       focus:border-tryonity-accent transition-all duration-200 cursor-text pointer-events-auto"
             autoComplete="off"
           />
           {code.length > 0 && code.length < 6 && (
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none z-30">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < code.length ? 'bg-styleswap-accent' : 'bg-gray-600'}`} />
+                <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < code.length ? 'bg-tryonity-accent' : 'bg-gray-600'}`} />
               ))}
             </div>
           )}
@@ -109,15 +109,15 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
             disabled={code.length !== 6}
             className={`w-full py-6 rounded-3xl text-2xl font-bold transition-all duration-200 ${
               code.length === 6
-                ? 'bg-styleswap-accent hover:bg-styleswap-accent-hover text-white shadow-2xl shadow-blue-600/30 hover:scale-[1.01]'
-                : 'bg-styleswap-surface text-styleswap-subtle cursor-not-allowed'
+                ? 'bg-tryonity-accent hover:bg-tryonity-accent-hover text-white shadow-2xl shadow-blue-600/30 hover:scale-[1.01]'
+                : 'bg-tryonity-surface text-tryonity-subtle cursor-not-allowed'
             }`}
           >
             View Look
           </button>
 
-          <p className="text-styleswap-subtle text-sm text-center">
-            Kiosk URL: <span className="text-styleswap-muted">{kioskUrl}</span>
+          <p className="text-tryonity-subtle text-sm text-center">
+            Kiosk URL: <span className="text-tryonity-muted">{kioskUrl}</span>
           </p>
         </div>
       </div>
@@ -130,25 +130,25 @@ function ProcessingState({ code }: { code: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-10">
       <div className="relative w-28 h-28">
-        <div className="absolute inset-0 border-4 border-styleswap-accent/15 rounded-full" />
-        <div className="absolute inset-0 border-4 border-styleswap-accent border-t-transparent rounded-full animate-spin" />
-        <div className="absolute inset-3 border-4 border-styleswap-accent/10 rounded-full" />
-        <div className="absolute inset-3 border-4 border-styleswap-accent/40 border-t-transparent rounded-full animate-spin [animation-direction:reverse] [animation-duration:0.7s]" />
+        <div className="absolute inset-0 border-4 border-tryonity-accent/15 rounded-full" />
+        <div className="absolute inset-0 border-4 border-tryonity-accent border-t-transparent rounded-full animate-spin" />
+        <div className="absolute inset-3 border-4 border-tryonity-accent/10 rounded-full" />
+        <div className="absolute inset-3 border-4 border-tryonity-accent/40 border-t-transparent rounded-full animate-spin [animation-direction:reverse] [animation-duration:0.7s]" />
       </div>
 
       <div className="text-center">
         <h2 className="text-white text-5xl font-bold mb-3">Generating your look...</h2>
-        <p className="text-styleswap-muted text-2xl">This usually takes about 8 seconds</p>
+        <p className="text-tryonity-muted text-2xl">This usually takes about 8 seconds</p>
       </div>
 
-      <div className="px-8 py-4 bg-styleswap-surface border border-styleswap-border rounded-3xl">
-        <p className="text-styleswap-subtle text-base mb-1 text-center">Code</p>
+      <div className="px-8 py-4 bg-tryonity-surface border border-tryonity-border rounded-3xl">
+        <p className="text-tryonity-subtle text-base mb-1 text-center">Code</p>
         <p className="text-white text-3xl font-bold tracking-[0.35em] tabular-nums">{code}</p>
       </div>
 
       <div className="flex gap-2.5">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="w-2.5 h-2.5 bg-styleswap-accent rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+          <div key={i} className="w-2.5 h-2.5 bg-tryonity-accent rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
         ))}
       </div>
     </div>
@@ -207,14 +207,14 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
           <button 
             onClick={() => scrollTo(Math.max(0, idx - 1))}
             disabled={idx === 0}
-            className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-styleswap-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-tryonity-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
           </button>
           <button 
             onClick={() => scrollTo(Math.min(urls.length - 1, idx + 1))}
             disabled={idx === urls.length - 1}
-            className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-styleswap-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-tryonity-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
           </button>
@@ -224,7 +224,7 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
       {/* Top gradient */}
       <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none z-20" />
 
-      {/* StyleSwap top label */}
+      {/* Tryonity top label */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30">
         {urls.length > 1 && (
           <div className="bg-[#ffde59] text-black text-xs font-black px-3 py-1 uppercase tracking-widest rounded-full shadow-lg">
@@ -232,9 +232,9 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
           </div>
         )}
         <div className="flex items-center gap-2 mt-1">
-          <div className="w-2.5 h-2.5 bg-styleswap-accent rounded-full" />
-          <span className="text-white text-sm font-bold uppercase tracking-widest opacity-80 shadow-black drop-shadow-md">StyleSwap Result</span>
-          <div className="w-2.5 h-2.5 bg-styleswap-accent rounded-full" />
+          <div className="w-2.5 h-2.5 bg-tryonity-accent rounded-full" />
+          <span className="text-white text-sm font-bold uppercase tracking-widest opacity-80 shadow-black drop-shadow-md">Tryonity Result</span>
+          <div className="w-2.5 h-2.5 bg-tryonity-accent rounded-full" />
         </div>
       </div>
 
@@ -243,10 +243,10 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
 
       {/* Bottom overlay */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 z-30">
-        <div className="bg-black/70 backdrop-blur-sm border border-styleswap-border/50 rounded-2xl px-6 py-4 text-right">
-          <p className="text-styleswap-subtle text-xs mb-1">Code</p>
+        <div className="bg-black/70 backdrop-blur-sm border border-tryonity-border/50 rounded-2xl px-6 py-4 text-right">
+          <p className="text-tryonity-subtle text-xs mb-1">Code</p>
           <p className="text-white font-bold text-2xl tabular-nums tracking-widest">{code}</p>
-          <p className={`text-xs font-medium mt-1 tabular-nums ${timeLeft > 60000 ? 'text-styleswap-muted' : 'text-amber-400'}`}>
+          <p className={`text-xs font-medium mt-1 tabular-nums ${timeLeft > 60000 ? 'text-tryonity-muted' : 'text-amber-400'}`}>
             {formatCountdown(timeLeft)} remaining
           </p>
         </div>
@@ -255,7 +255,7 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
           id="kiosk-try-another-btn"
           type="button"
           onClick={onReset}
-          className="bg-styleswap-accent hover:bg-styleswap-accent-hover text-white font-bold px-10 py-5 rounded-2xl
+          className="bg-tryonity-accent hover:bg-tryonity-accent-hover text-white font-bold px-10 py-5 rounded-2xl
                      transition-all duration-200 hover:scale-[1.02] shadow-2xl shadow-blue-600/30 text-xl"
         >
           Try Another Look
@@ -276,14 +276,14 @@ function ErrorState({ message, onReset }: { message: string; onReset: () => void
       </div>
       <div className="text-center">
         <h2 className="text-white text-4xl font-bold mb-3">{message}</h2>
-        <p className="text-styleswap-muted text-xl">Check the code on your phone and try again</p>
+        <p className="text-tryonity-muted text-xl">Check the code on your phone and try again</p>
       </div>
       <button
         id="kiosk-try-again-btn"
         type="button"
         onClick={onReset}
-        className="bg-styleswap-surface hover:bg-styleswap-surface2 text-white font-bold px-12 py-5 rounded-2xl
-                   transition-all duration-200 border border-styleswap-border text-xl"
+        className="bg-tryonity-surface hover:bg-tryonity-surface2 text-white font-bold px-12 py-5 rounded-2xl
+                   transition-all duration-200 border border-tryonity-border text-xl"
       >
         Try Again
       </button>

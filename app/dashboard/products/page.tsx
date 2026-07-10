@@ -31,7 +31,7 @@ export default async function ProductsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Products</h1>
-          <p className="text-styleswap-muted text-sm mt-1">{products.length} item{products.length !== 1 ? 's' : ''} in catalogue</p>
+          <p className="text-tryonity-muted text-sm mt-1">{products.length} item{products.length !== 1 ? 's' : ''} in catalogue</p>
         </div>
         <Link href="/dashboard/products/new" className="btn-primary !w-auto px-5 py-3 text-sm">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

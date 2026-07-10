@@ -114,7 +114,7 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Take a photo">
-      <div className="w-full max-w-lg bg-styleswap-bg border-4 border-black shadow-neo-lg flex flex-col">
+      <div className="w-full max-w-lg bg-tryonity-bg border-4 border-black shadow-neo-lg flex flex-col">
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b-4 border-black bg-white">
@@ -123,7 +123,7 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
             type="button"
             onClick={handleClose}
             aria-label="Close camera"
-            className="w-10 h-10 bg-white border-4 border-black flex items-center justify-center shadow-neo-sm hover:bg-styleswap-error hover:-translate-y-0.5 transition-all"
+            className="w-10 h-10 bg-white border-4 border-black flex items-center justify-center shadow-neo-sm hover:bg-tryonity-error hover:-translate-y-0.5 transition-all"
           >
             <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
@@ -170,7 +170,7 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
             onClick={() => setFacingMode((m) => (m === 'user' ? 'environment' : 'user'))}
             disabled={!!error}
             aria-label="Switch camera"
-            className="w-12 h-12 bg-white border-4 border-black flex items-center justify-center shadow-neo-sm hover:bg-styleswap-accent hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-12 h-12 bg-white border-4 border-black flex items-center justify-center shadow-neo-sm hover:bg-tryonity-accent hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -184,7 +184,7 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
             aria-label="Capture photo"
             className={`w-16 h-16 rounded-full border-4 border-black flex items-center justify-center transition-all ${
               ready && !error && countdown === null
-                ? 'bg-styleswap-accent shadow-neo hover:-translate-y-1 hover:shadow-neo-lg active:translate-y-0.5 active:shadow-none'
+                ? 'bg-tryonity-accent shadow-neo hover:-translate-y-1 hover:shadow-neo-lg active:translate-y-0.5 active:shadow-none'
                 : 'bg-gray-300 cursor-not-allowed'
             }`}
           >

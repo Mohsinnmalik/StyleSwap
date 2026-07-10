@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: { default: 'StyleSwap — Virtual Try-On', template: '%s | StyleSwap' },
+  title: { default: 'Tryonity — Virtual Try-On', template: '%s | Tryonity' },
   description: 'AI-powered virtual try-on for clothing showrooms. See how any outfit looks on you before buying.',
   keywords: ['virtual try-on', 'AI fashion', 'clothing', 'showroom'],
 };
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="bg-styleswap-bg text-styleswap-text antialiased">{children}</body>
+      <body className="bg-tryonity-bg text-tryonity-text antialiased">{children}</body>
     </html>
   );
 }

@@ -1,4 +1,4 @@
-## StyleSwap — Virtual Try-On System
+## Tryonity — Virtual Try-On System
 
 A production-ready virtual try-on web system for clothing showrooms. Customers browse a product catalogue, select a garment, upload a photo, and get an AI try-on result via a session code on a large kiosk display screen.
 
@@ -7,7 +7,7 @@ A production-ready virtual try-on web system for clothing showrooms. Customers b
 ## Tech Stack
 
 - **Next.js 14** — App Router, TypeScript
-- **Tailwind CSS** — Custom dark StyleSwap design tokens
+- **Tailwind CSS** — Custom dark Tryonity design tokens
 - **MongoDB Atlas** — via Mongoose ODM
 - **NextAuth.js v5** — Credentials provider, JWT
 - **Cloudinary** — Product + session image storage
@@ -21,7 +21,7 @@ A production-ready virtual try-on web system for clothing showrooms. Customers b
 Create `.env.local` with:
 
 ```env
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/styleswap?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/tryonity?retryWrites=true&w=majority
 AUTH_SECRET=<generate: npx auth secret OR openssl rand -base64 32>
 NEXTAUTH_URL=http://localhost:3000
 CLOUDINARY_CLOUD_NAME=<your cloud name>
@@ -72,9 +72,9 @@ npx ts-node --project tsconfig.seed.json scripts/seed.ts
 ```
 
 This creates:
-- **Email:** `owner@styleswap.demo`
-- **Password:** `styleswap123`
-- **Shop:** `styleswap-demo` (5 sample products)
+- **Email:** `owner@tryonity.demo`
+- **Password:** `tryonity123`
+- **Shop:** `tryonity-demo` (5 sample products)
 
 ---
 
@@ -94,7 +94,7 @@ This creates:
 | `/kiosk` | Kiosk display (all 4 states) |
 
 ### Demo links (after seed):
-- Customer shop: [http://localhost:3000/shop/styleswap-demo](http://localhost:3000/shop/styleswap-demo)
+- Customer shop: [http://localhost:3000/shop/tryonity-demo](http://localhost:3000/shop/tryonity-demo)
 - Owner dashboard: [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
 - Kiosk: [http://localhost:3000/kiosk](http://localhost:3000/kiosk)
 
@@ -103,7 +103,7 @@ This creates:
 ## Full Flow
 
 1. **Owner** logs in or registers → adds products with photos → downloads QR code from Shop Settings
-2. **Customer** scans QR → lands on `/shop/styleswap-demo`
+2. **Customer** scans QR → lands on `/shop/tryonity-demo`
 3. Browses catalogue → filters by category → clicks "Try On" on a product
 4. Uploads their full-body photo → clicks "Generate Look"
 5. Gets a 6-digit session code → sees countdown timer
@@ -157,5 +157,5 @@ Set all environment variables in Vercel dashboard → Project Settings → Envir
 
 ---
 
-*Powered by StyleSwap*
+*Powered by Tryonity*
 #

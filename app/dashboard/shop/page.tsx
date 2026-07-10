@@ -25,7 +25,7 @@ export default async function ShopSettingsPage() {
     <div className="max-w-2xl animate-fade-in">
       <div className="mb-6">
         <h1 className="page-title">Shop Settings</h1>
-        <p className="text-styleswap-muted text-sm mt-1">Manage your shop info and download your customer QR code</p>
+        <p className="text-tryonity-muted text-sm mt-1">Manage your shop info and download your customer QR code</p>
       </div>
       <ShopSettingsClient key={serialized?._id ?? 'empty'} shop={serialized} />
     </div>

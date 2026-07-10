@@ -194,8 +194,8 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
               onClick={() => toggleSize(s)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                 sizes.includes(s)
-                  ? 'bg-styleswap-accent/20 border-styleswap-accent text-styleswap-accent'
-                  : 'bg-styleswap-surface border-styleswap-border text-styleswap-muted hover:border-styleswap-border2'
+                  ? 'bg-tryonity-accent/20 border-tryonity-accent text-tryonity-accent'
+                  : 'bg-tryonity-surface border-tryonity-border text-tryonity-muted hover:border-tryonity-border2'
               }`}
             >
               {s}
@@ -220,7 +220,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
         {colors.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {colors.map((c) => (
-              <span key={c} className="badge bg-styleswap-surface2 text-styleswap-muted border border-styleswap-border gap-1">
+              <span key={c} className="badge bg-tryonity-surface2 text-tryonity-muted border border-tryonity-border gap-1">
                 {c}
                 <button type="button" onClick={() => setColors((prev) => prev.filter((x) => x !== c))} className="ml-1 hover:text-white">×</button>
               </span>
@@ -237,10 +237,10 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
         {totalImages > 0 && (
           <div className="flex flex-wrap gap-3 mb-3">
             {keepImages.map((img, idx) => (
-              <div key={img.public_id} className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-colors ${primaryIdx === idx ? 'border-styleswap-accent' : 'border-styleswap-border'}`} onClick={() => setPrimaryIdx(idx)}>
+              <div key={img.public_id} className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-colors ${primaryIdx === idx ? 'border-tryonity-accent' : 'border-tryonity-border'}`} onClick={() => setPrimaryIdx(idx)}>
                 <Image src={img.url} alt="" fill className="object-cover" />
                 {primaryIdx === idx && (
-                  <div className="absolute top-1 left-1 bg-styleswap-accent rounded-full w-4 h-4 flex items-center justify-center">
+                  <div className="absolute top-1 left-1 bg-tryonity-accent rounded-full w-4 h-4 flex items-center justify-center">
                     <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                   </div>
                 )}
@@ -250,7 +250,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
             {newPreviews.map((src, idx) => {
               const absIdx = keepImages.length + idx;
               return (
-                <div key={src} className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-colors ${primaryIdx === absIdx ? 'border-styleswap-accent' : 'border-styleswap-border'}`} onClick={() => setPrimaryIdx(absIdx)}>
+                <div key={src} className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-colors ${primaryIdx === absIdx ? 'border-tryonity-accent' : 'border-tryonity-border'}`} onClick={() => setPrimaryIdx(absIdx)}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={src} alt="" className="w-full h-full object-cover" />
                   <button type="button" onClick={(e) => { e.stopPropagation(); removeNewFile(idx); }} className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center text-white text-xs hover:bg-red-600">×</button>
@@ -264,17 +264,17 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full border-2 border-dashed border-styleswap-border rounded-2xl py-6 flex flex-col items-center gap-2 hover:border-styleswap-accent/50 hover:bg-styleswap-surface2/50 transition-colors"
+            className="w-full border-2 border-dashed border-tryonity-border rounded-2xl py-6 flex flex-col items-center gap-2 hover:border-tryonity-accent/50 hover:bg-tryonity-surface2/50 transition-colors"
           >
-            <svg className="w-7 h-7 text-styleswap-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-7 h-7 text-tryonity-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p className="text-styleswap-muted text-sm">Click to upload images</p>
-            <p className="text-styleswap-subtle text-xs">JPG, PNG, WebP · Max 5MB each · {5 - totalImages} remaining</p>
+            <p className="text-tryonity-muted text-sm">Click to upload images</p>
+            <p className="text-tryonity-subtle text-xs">JPG, PNG, WebP · Max 5MB each · {5 - totalImages} remaining</p>
           </button>
         )}
         <input ref={fileInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => handleFiles(e.target.files)} />
-        {totalImages > 0 && <p className="text-styleswap-subtle text-xs mt-2">Click an image to set as primary (star icon)</p>}
+        {totalImages > 0 && <p className="text-tryonity-subtle text-xs mt-2">Click an image to set as primary (star icon)</p>}
       </div>
 
       {/* Error */}

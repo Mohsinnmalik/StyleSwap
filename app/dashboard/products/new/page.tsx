@@ -8,7 +8,7 @@ export default function NewProductPage() {
     <div className="max-w-2xl animate-fade-in">
       <div className="mb-6">
         <h1 className="page-title">Add Product</h1>
-        <p className="text-styleswap-muted text-sm mt-1">Add a new item to your catalogue</p>
+        <p className="text-tryonity-muted text-sm mt-1">Add a new item to your catalogue</p>
       </div>
       <ProductForm mode="create" />
     </div>

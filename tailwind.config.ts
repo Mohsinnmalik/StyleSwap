@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       colors: {
         // Neobrutalism design system
-        styleswap: {
+        tryonity: {
           bg:        '#fffce1', // Creamy yellow background
           surface:   '#ffffff', // White cards
           surface2:  '#f0f0f0', // Light gray for slight contrast

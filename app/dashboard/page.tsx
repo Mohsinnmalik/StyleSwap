@@ -72,7 +72,7 @@ export default async function DashboardPage() {
           <h1 className="page-title">
             {shop ? shop.name : 'Dashboard'}
           </h1>
-          <p className="text-styleswap-muted text-sm mt-1">Welcome back — here's what's happening</p>
+          <p className="text-tryonity-muted text-sm mt-1">Welcome back — here's what's happening</p>
         </div>
         <Link href="/dashboard/products/new" className="btn-primary !w-auto px-5 py-3 text-sm">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-black font-black uppercase text-base tracking-wide">Product Catalogue</p>
-            <p className="text-styleswap-subtle text-sm font-bold mt-0.5">Add, edit, and manage your products</p>
+            <p className="text-tryonity-subtle text-sm font-bold mt-0.5">Add, edit, and manage your products</p>
           </div>
           <svg className="w-6 h-6 text-black ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
@@ -120,14 +120,14 @@ export default async function DashboardPage() {
         </Link>
 
         <Link href="/dashboard/shop" className="card-hover bg-white p-5 flex items-center gap-4">
-          <div className="w-12 h-12 bg-styleswap-accent border-4 border-black rounded-neo flex items-center justify-center flex-shrink-0 shadow-neo-sm">
+          <div className="w-12 h-12 bg-tryonity-accent border-4 border-black rounded-neo flex items-center justify-center flex-shrink-0 shadow-neo-sm">
             <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
           </div>
           <div>
             <p className="text-black font-black uppercase text-base tracking-wide">Shop Settings & QR</p>
-            <p className="text-styleswap-subtle text-sm font-bold mt-0.5">Edit shop info and download your QR</p>
+            <p className="text-tryonity-subtle text-sm font-bold mt-0.5">Edit shop info and download your QR</p>
           </div>
           <svg className="w-6 h-6 text-black ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />

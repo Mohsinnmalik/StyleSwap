@@ -23,11 +23,11 @@ export default function ProductDetailClient({ shop, product }: Props) {
   const currentImg = product.images[activeImg]?.url ?? '';
 
   return (
-    <div className="min-h-screen bg-styleswap-bg font-sans">
-      <div className="w-full max-w-6xl mx-auto min-h-screen flex flex-col relative bg-styleswap-surface pb-24 shadow-2xl">
+    <div className="min-h-screen bg-tryonity-bg font-sans">
+      <div className="w-full max-w-6xl mx-auto min-h-screen flex flex-col relative bg-tryonity-surface pb-24 shadow-2xl">
         {/* Back bar */}
-        <div className="sticky top-0 z-50 bg-styleswap-bg/80 backdrop-blur-sm border-b-4 border-styleswap-border px-6 h-20 flex items-center gap-4">
-          <button onClick={() => router.back()} className="btn-icon bg-white border-2 border-black hover:bg-styleswap-accent hover:-translate-y-0.5 shadow-neo-sm hover:shadow-neo transition-all rounded-neo flex items-center justify-center w-12 h-12">
+        <div className="sticky top-0 z-50 bg-tryonity-bg/80 backdrop-blur-sm border-b-4 border-tryonity-border px-6 h-20 flex items-center gap-4">
+          <button onClick={() => router.back()} className="btn-icon bg-white border-2 border-black hover:bg-tryonity-accent hover:-translate-y-0.5 shadow-neo-sm hover:shadow-neo transition-all rounded-neo flex items-center justify-center w-12 h-12">
             <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
             </svg>
@@ -55,7 +55,7 @@ export default function ProductDetailClient({ shop, product }: Props) {
                   <button
                     key={img.public_id}
                     onClick={() => setActiveImg(idx)}
-                    className={`w-14 h-14 bg-white shadow-neo-sm overflow-hidden border-4 transition-all hover:-translate-y-1 hover:shadow-neo ${idx === activeImg ? 'border-styleswap-accent' : 'border-black opacity-80 hover:opacity-100'}`}
+                    className={`w-14 h-14 bg-white shadow-neo-sm overflow-hidden border-4 transition-all hover:-translate-y-1 hover:shadow-neo ${idx === activeImg ? 'border-tryonity-accent' : 'border-black opacity-80 hover:opacity-100'}`}
                   >
                     <Image src={img.url} alt="" width={56} height={56} className="w-full h-full object-cover" />
                   </button>
@@ -65,8 +65,8 @@ export default function ProductDetailClient({ shop, product }: Props) {
           </div>
 
           {/* Info */}
-          <div className="px-6 py-8 xl:p-0 flex flex-col flex-1 bg-styleswap-surface">
-            <p className="text-styleswap-accent text-sm font-black uppercase tracking-widest border-b-4 border-black inline-block self-start mb-4">{product.category}</p>
+          <div className="px-6 py-8 xl:p-0 flex flex-col flex-1 bg-tryonity-surface">
+            <p className="text-tryonity-accent text-sm font-black uppercase tracking-widest border-b-4 border-black inline-block self-start mb-4">{product.category}</p>
             <h1 className="text-black text-3xl xl:text-4xl font-black uppercase tracking-tighter leading-snug">{product.name}</h1>
             <p className="text-black bg-[#ffde59] border-4 border-black px-4 py-2 shadow-neo-sm self-start text-2xl xl:text-3xl font-extrabold mt-4">{formatPrice(product.price)}</p>
 
@@ -86,7 +86,7 @@ export default function ProductDetailClient({ shop, product }: Props) {
                       onClick={() => setSelectedSize(s === selectedSize ? '' : s)}
                       className={`px-5 py-3 font-black text-base uppercase border-4 border-black shadow-neo-sm transition-all hover:-translate-y-0.5 hover:shadow-neo ${
                         s === selectedSize
-                          ? 'bg-styleswap-accent text-black'
+                          ? 'bg-tryonity-accent text-black'
                           : 'bg-white text-black hover:bg-gray-100'
                       }`}
                     >
@@ -116,7 +116,7 @@ export default function ProductDetailClient({ shop, product }: Props) {
             <div className="mt-10 flex flex-col gap-4">
               <Link
                 href={`/shop/${shop.slug}/tryon?product=${product._id}`}
-                className="w-full py-5 bg-styleswap-accent border-4 border-black text-black text-lg font-black uppercase shadow-neo hover:-translate-y-1 hover:shadow-neo-lg active:translate-y-1 active:shadow-none transition-all flex justify-center items-center gap-3 rounded-neo"
+                className="w-full py-5 bg-tryonity-accent border-4 border-black text-black text-lg font-black uppercase shadow-neo hover:-translate-y-1 hover:shadow-neo-lg active:translate-y-1 active:shadow-none transition-all flex justify-center items-center gap-3 rounded-neo"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 10l4.553-2.069A1 1 0 0121 8.87V15.13a1 1 0 01-1.447.899L15 14M3 8h12v8H3z" />

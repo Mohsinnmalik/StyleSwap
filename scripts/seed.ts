@@ -57,20 +57,20 @@ async function seed() {
   console.log('✅ Connected to MongoDB');
 
   // Clear existing seed data
-  await User.deleteMany({ email: 'owner@styleswap.demo' });
+  await User.deleteMany({ email: 'owner@tryonity.demo' });
 
   // Create owner
-  const hashedPw = await bcrypt.hash('styleswap123', 12);
+  const hashedPw = await bcrypt.hash('tryonity123', 12);
   const owner    = await User.create({
     name:     'Demo Owner',
-    email:    'owner@styleswap.demo',
+    email:    'owner@tryonity.demo',
     password: hashedPw,
     role:     'owner',
   });
   console.log('✅ Owner created:', owner.email);
 
   // Create shop
-  const oldShop = await Shop.findOne({ slug: 'styleswap-demo' });
+  const oldShop = await Shop.findOne({ slug: 'tryonity-demo' });
   if (oldShop) {
     await Product.deleteMany({ shop_id: oldShop._id });
     await Shop.deleteOne({ _id: oldShop._id });
@@ -78,9 +78,9 @@ async function seed() {
 
   const shop = await Shop.create({
     owner_id:    owner._id,
-    name:        'StyleSwap Demo Shop',
-    slug:        'styleswap-demo',
-    description: 'A sample showroom for the StyleSwap virtual try-on demo.',
+    name:        'Tryonity Demo Shop',
+    slug:        'tryonity-demo',
+    description: 'A sample showroom for the Tryonity virtual try-on demo.',
     is_active:   true,
   });
   console.log('✅ Shop created:', shop.slug);
@@ -116,9 +116,9 @@ async function seed() {
 
   console.log('\n🎉 Seed complete!');
   console.log('──────────────────────────────────');
-  console.log('  Owner Email:    owner@styleswap.demo');
-  console.log('  Owner Password: styleswap123');
-  console.log('  Shop URL:      /shop/styleswap-demo');
+  console.log('  Owner Email:    owner@tryonity.demo');
+  console.log('  Owner Password: tryonity123');
+  console.log('  Shop URL:      /shop/tryonity-demo');
   console.log('  Dashboard:     /dashboard');
   console.log('  Kiosk:         /kiosk');
   console.log('──────────────────────────────────');

@@ -34,7 +34,7 @@ export default async function EditProductPage({ params }: { params: { id: string
     <div className="max-w-2xl animate-fade-in">
       <div className="mb-6">
         <h1 className="page-title">Edit Product</h1>
-        <p className="text-styleswap-muted text-sm mt-1">{product.name}</p>
+        <p className="text-tryonity-muted text-sm mt-1">{product.name}</p>
       </div>
       <ProductForm mode="edit" product={serialized} />
     </div>

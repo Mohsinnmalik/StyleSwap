@@ -57,10 +57,10 @@ export default function CatalogueClient({
   const primaryImg = (p: Product) => p.images.find((i) => i.is_primary)?.url ?? p.images[0]?.url ?? '';
 
   return (
-    <div className="min-h-screen bg-styleswap-bg font-sans">
-      <div className="w-full min-h-screen flex flex-col relative bg-styleswap-surface pb-24">
+    <div className="min-h-screen bg-tryonity-bg font-sans">
+      <div className="w-full min-h-screen flex flex-col relative bg-tryonity-surface pb-24">
       {/* Header */}
-      <header className="px-4 pt-10 pb-5 border-b-4 border-styleswap-border bg-styleswap-bg shadow-neo-sm sticky top-0 z-20">
+      <header className="px-4 pt-10 pb-5 border-b-4 border-tryonity-border bg-tryonity-bg shadow-neo-sm sticky top-0 z-20">
         <div className="flex items-center gap-3 mb-1">
           {shop.logo_url && (
             <div className="w-12 h-12 rounded-neo overflow-hidden bg-white border-4 border-black flex-shrink-0 shadow-neo-sm">
@@ -68,8 +68,8 @@ export default function CatalogueClient({
             </div>
           )}
           <div>
-            <h1 className="text-styleswap-text font-black text-2xl uppercase tracking-tighter leading-tight">{shop.name}</h1>
-            {shop.description && <p className="text-styleswap-subtle text-sm font-bold mt-0.5">{shop.description}</p>}
+            <h1 className="text-tryonity-text font-black text-2xl uppercase tracking-tighter leading-tight">{shop.name}</h1>
+            {shop.description && <p className="text-tryonity-subtle text-sm font-bold mt-0.5">{shop.description}</p>}
           </div>
         </div>
 
@@ -78,7 +78,7 @@ export default function CatalogueClient({
           <div className="w-3 h-3 bg-[#00cc00] border-2 border-black rounded-none shadow-neo-sm" />
           <p className="text-black font-black text-xs uppercase tracking-widest border-b-2 border-black inline-block">Virtual Try-On</p>
           {selectedCount > 0 && (
-            <span className="ml-auto text-xs font-black uppercase tracking-wider bg-styleswap-accent text-black border-2 border-black px-2 py-0.5 shadow-neo-sm">
+            <span className="ml-auto text-xs font-black uppercase tracking-wider bg-tryonity-accent text-black border-2 border-black px-2 py-0.5 shadow-neo-sm">
               {selectedCount}/{MAX_SELECTION} selected
             </span>
           )}
@@ -86,14 +86,14 @@ export default function CatalogueClient({
       </header>
 
       {/* Filter chips */}
-      <div className="px-4 py-4 flex gap-3 overflow-x-auto scrollbar-none border-b-4 border-styleswap-border bg-white shadow-[0_4px_0_0_rgba(0,0,0,1)] z-10 relative">
+      <div className="px-4 py-4 flex gap-3 overflow-x-auto scrollbar-none border-b-4 border-tryonity-border bg-white shadow-[0_4px_0_0_rgba(0,0,0,1)] z-10 relative">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveFilter(cat)}
             className={`flex-shrink-0 px-5 py-2 rounded-neo text-sm font-black uppercase tracking-wider border-4 border-black transition-all duration-150 shadow-neo-sm hover:-translate-y-0.5 hover:shadow-neo active:translate-y-0.5 active:shadow-none ${
               activeFilter === cat
-                ? 'bg-styleswap-accent text-black'
+                ? 'bg-tryonity-accent text-black'
                 : 'bg-white text-black hover:bg-[#f0f0f0]'
             }`}
           >
@@ -149,7 +149,7 @@ export default function CatalogueClient({
                     <button onClick={() => toggleSelect(product._id)} disabled={isDisabled}
                       title={isDisabled ? `Max ${MAX_SELECTION} items` : isSelected ? 'Deselect' : 'Select for multi try-on'}
                       className={`absolute top-2 left-2 w-8 h-8 border-4 border-black flex items-center justify-center transition-all shadow-neo-sm ${
-                        isSelected ? 'bg-styleswap-accent hover:bg-red-400' : isDisabled ? 'bg-gray-300 cursor-not-allowed opacity-50' : 'bg-white hover:bg-[#ffde59]'
+                        isSelected ? 'bg-tryonity-accent hover:bg-red-400' : isDisabled ? 'bg-gray-300 cursor-not-allowed opacity-50' : 'bg-white hover:bg-[#ffde59]'
                       }`}>
                       {isSelected ? (
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
@@ -158,7 +158,7 @@ export default function CatalogueClient({
                       )}
                     </button>
                     {isSelected && (
-                      <div className="absolute top-2 right-2 bg-styleswap-accent border-4 border-black px-2 py-0.5 shadow-neo-sm">
+                      <div className="absolute top-2 right-2 bg-tryonity-accent border-4 border-black px-2 py-0.5 shadow-neo-sm">
                         <p className="text-black text-xs font-black uppercase">✓ Selected</p>
                       </div>
                     )}
@@ -167,7 +167,7 @@ export default function CatalogueClient({
                     <p className="text-black font-black text-sm uppercase leading-tight line-clamp-2 flex-1">{product.name}</p>
                     <p className="text-black font-extrabold text-base mt-2 bg-[#ffde59] border-2 border-black inline-block px-2 py-0.5 shadow-neo-sm self-start">{formatPrice(product.price)}</p>
                     <Link href={`/shop/${shop.slug}/tryon?product=${product._id}`}
-                      className="mt-4 w-full flex items-center justify-center gap-1.5 bg-styleswap-accent hover:bg-[#e04848] text-black text-xs font-black uppercase py-3 border-2 border-black rounded-neo shadow-neo-sm hover:shadow-neo hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+                      className="mt-4 w-full flex items-center justify-center gap-1.5 bg-tryonity-accent hover:bg-[#e04848] text-black text-xs font-black uppercase py-3 border-2 border-black rounded-neo shadow-neo-sm hover:shadow-neo hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 10l4.553-2.069A1 1 0 0121 8.87V15.13a1 1 0 01-1.447.899L15 14M3 8h12v8H3z" /></svg>
                       Try On
                     </Link>
@@ -195,7 +195,7 @@ export default function CatalogueClient({
               </button>
             </div>
             <button onClick={handleTryAll}
-              className="w-full py-3.5 bg-styleswap-accent border-4 border-black text-black text-sm font-black uppercase shadow-neo hover:-translate-y-1 hover:shadow-neo-lg transition-all flex justify-center items-center gap-2">
+              className="w-full py-3.5 bg-tryonity-accent border-4 border-black text-black text-sm font-black uppercase shadow-neo hover:-translate-y-1 hover:shadow-neo-lg transition-all flex justify-center items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
               Try {selectedCount > 1 ? 'All' : 'It'} On →
             </button>
@@ -207,7 +207,7 @@ export default function CatalogueClient({
       {selectedCount === 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-6">
           <Link href={`/shop/${shop.slug}/tryon`}
-            className="flex items-center justify-center gap-3 bg-white border-4 border-black text-black text-sm font-black uppercase tracking-widest px-6 py-4 rounded-neo shadow-neo-lg hover:bg-styleswap-accent hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all w-full">
+            className="flex items-center justify-center gap-3 bg-white border-4 border-black text-black text-sm font-black uppercase tracking-widest px-6 py-4 rounded-neo shadow-neo-lg hover:bg-tryonity-accent hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all w-full">
             <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>

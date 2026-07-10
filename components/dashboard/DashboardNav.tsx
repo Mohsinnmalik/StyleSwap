@@ -28,7 +28,7 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <span className="text-black font-black text-xl uppercase tracking-tighter hidden sm:block mt-1">StyleSwap</span>
+            <span className="text-black font-black text-xl uppercase tracking-tighter hidden sm:block mt-1">Tryonity</span>
           </Link>
 
           {/* Nav links */}
@@ -81,7 +81,7 @@ export default function DashboardNav({ user }: DashboardNavProps) {
               key={href}
               href={href}
               className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-black uppercase tracking-wider border-x border-black transition-colors ${
-                active ? 'bg-styleswap-accent text-black border-b-4 border-b-black' : 'text-black hover:bg-[#f0f0f0]'
+                active ? 'bg-tryonity-accent text-black border-b-4 border-b-black' : 'text-black hover:bg-[#f0f0f0]'
               }`}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

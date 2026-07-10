@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { waitUntil } from '@vercel/functions';
 import mongoose from 'mongoose';
+
+export const maxDuration = 60; // Allow enough time for Vertex AI try-on generation (default is 10s on Vercel Hobby)
 import { connectDB } from '@/lib/mongodb';
 import { Shop, IShop } from '@/models/Shop';
 import { Product, IProduct } from '@/models/Product';

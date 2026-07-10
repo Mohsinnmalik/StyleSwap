@@ -40,8 +40,8 @@ function UploadZone({
   return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex flex-col">
-        <p className="text-styleswap-text text-lg font-black tracking-widest uppercase">{label}</p>
-        <p className="text-styleswap-subtle text-sm font-bold mt-0.5">{hint}</p>
+        <p className="text-tryonity-text text-lg font-black tracking-widest uppercase">{label}</p>
+        <p className="text-tryonity-subtle text-sm font-bold mt-0.5">{hint}</p>
       </div>
 
       <button
@@ -58,17 +58,17 @@ function UploadZone({
         className={`relative w-full rounded-neo transition-all duration-150 overflow-hidden group ${
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
         } ${
-          preview ? 'border-4 border-styleswap-border shadow-neo' :
-          dragging ? 'border-4 border-styleswap-border bg-styleswap-accent border-dashed shadow-neo'
-          : error ? 'border-4 border-styleswap-error bg-red-100 shadow-neo'
-          : 'border-4 border-styleswap-border bg-[#ffffff] hover:bg-styleswap-accent hover:-translate-y-1 hover:shadow-neo transition-all'
+          preview ? 'border-4 border-tryonity-border shadow-neo' :
+          dragging ? 'border-4 border-tryonity-border bg-tryonity-accent border-dashed shadow-neo'
+          : error ? 'border-4 border-tryonity-error bg-red-100 shadow-neo'
+          : 'border-4 border-tryonity-border bg-[#ffffff] hover:bg-tryonity-accent hover:-translate-y-1 hover:shadow-neo transition-all'
         }`}
       >
         {preview ? (
           <div className="relative aspect-[3/4] w-full bg-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={preview} alt="Preview" className="w-full h-full object-cover grayscale-[20%] contrast-125" />
-            <div className="absolute inset-0 bg-styleswap-accent opacity-0 group-hover:opacity-20 transition-opacity duration-150 flex items-end justify-center pb-6">
+            <div className="absolute inset-0 bg-tryonity-accent opacity-0 group-hover:opacity-20 transition-opacity duration-150 flex items-end justify-center pb-6">
               <p className="text-black text-sm font-black uppercase tracking-wider px-4 py-2 bg-white border-4 border-black shadow-neo-sm">Tap to change</p>
             </div>
             <div className="absolute top-4 right-4 w-10 h-10 bg-white border-4 border-black rounded-neo flex items-center justify-center shadow-neo-sm hover:-translate-y-1 hover:shadow-neo transition-all">
@@ -110,7 +110,7 @@ function UploadZone({
           onClick={onCameraClick}
           disabled={disabled}
           className={`w-full py-3 flex items-center justify-center gap-3 border-4 border-black rounded-neo bg-white text-black text-base font-black uppercase tracking-wider shadow-neo-sm transition-all ${
-            disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-styleswap-accent hover:-translate-y-0.5 hover:shadow-neo active:translate-y-0.5 active:shadow-none'
+            disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-tryonity-accent hover:-translate-y-0.5 hover:shadow-neo active:translate-y-0.5 active:shadow-none'
           }`}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,27 +215,27 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
   // Loading screen while submitting
   if (submitting) {
     return (
-      <div className="min-h-screen bg-styleswap-bg flex flex-col items-center justify-center gap-8 px-4">
+      <div className="min-h-screen bg-tryonity-bg flex flex-col items-center justify-center gap-8 px-4">
         <div className="relative w-32 h-32 border-8 border-black shadow-neo-lg bg-white flex items-center justify-center">
-          <div className="absolute inset-0 border-8 border-styleswap-accent animate-spin-slow" style={{ animationDuration: '4s' }} />
+          <div className="absolute inset-0 border-8 border-tryonity-accent animate-spin-slow" style={{ animationDuration: '4s' }} />
           <p className="text-black font-black text-2xl uppercase animate-pulse">Wait</p>
         </div>
         <div className="text-center">
-          <h2 className="text-styleswap-text text-4xl font-black uppercase tracking-tighter">Processing...</h2>
-          <p className="text-styleswap-subtle text-lg font-bold mt-3 max-w-xs mx-auto border-2 border-black bg-white p-2 shadow-neo-sm">Our AI is rendering your look.</p>
+          <h2 className="text-tryonity-text text-4xl font-black uppercase tracking-tighter">Processing...</h2>
+          <p className="text-tryonity-subtle text-lg font-bold mt-3 max-w-xs mx-auto border-2 border-black bg-white p-2 shadow-neo-sm">Our AI is rendering your look.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-styleswap-bg text-styleswap-text pb-24 font-sans">
+    <div className="min-h-screen bg-tryonity-bg text-tryonity-text pb-24 font-sans">
       
       {/* Centered Mobile-like container for desktop */}
-      <div className="max-w-4xl mx-auto w-full min-h-screen flex flex-col relative bg-styleswap-surface border-x-4 border-styleswap-border shadow-neo">
+      <div className="max-w-4xl mx-auto w-full min-h-screen flex flex-col relative bg-tryonity-surface border-x-4 border-tryonity-border shadow-neo">
         
         {/* Sticky Header */}
-        <header className="sticky top-0 z-20 px-5 pt-8 pb-4 flex items-center justify-between bg-styleswap-bg border-b-4 border-styleswap-border shadow-neo-sm">
+        <header className="sticky top-0 z-20 px-5 pt-8 pb-4 flex items-center justify-between bg-tryonity-bg border-b-4 border-tryonity-border shadow-neo-sm">
           <div className="flex items-center gap-4">
             <Link href={`/shop/${shopSlug}`} className="btn-icon">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,8 +243,8 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
               </svg>
             </Link>
             <div>
-              <p className="text-styleswap-accent text-xs font-black uppercase tracking-widest border-b-2 border-black inline-block">StyleSwap AI</p>
-              <h1 className="text-styleswap-text text-2xl font-black uppercase tracking-tighter">Virtual Try-On</h1>
+              <p className="text-tryonity-accent text-xs font-black uppercase tracking-widest border-b-2 border-black inline-block">Tryonity AI</p>
+              <h1 className="text-tryonity-text text-2xl font-black uppercase tracking-tighter">Virtual Try-On</h1>
             </div>
           </div>
         </header>
@@ -254,7 +254,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
           {/* Multi-product banner */}
           {isMultiMode && multiProducts && (
             <div className="card p-4 bg-[#ffffff]">
-              <p className="text-styleswap-accent text-xs uppercase font-black tracking-widest mb-2 border-b-2 border-black inline-block">Trying {multiProducts.length} Items</p>
+              <p className="text-tryonity-accent text-xs uppercase font-black tracking-widest mb-2 border-b-2 border-black inline-block">Trying {multiProducts.length} Items</p>
               <div className="flex gap-3 overflow-x-auto">
                 {multiProducts.map((prod) => {
                   const img = prod.images.find((i) => i.is_primary)?.url ?? prod.images[0]?.url ?? '';
@@ -278,10 +278,10 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-styleswap-accent text-xs uppercase font-black tracking-widest mb-1 border-b-2 border-black inline-block">Selected</p>
+                <p className="text-tryonity-accent text-xs uppercase font-black tracking-widest mb-1 border-b-2 border-black inline-block">Selected</p>
                 <p className="text-black font-black text-lg truncate uppercase">{preselectedProduct.name}</p>
               </div>
-              <Link href={`/shop/${shopSlug}`} className="px-4 py-2 bg-white border-4 border-black shadow-neo-sm text-black text-sm font-black uppercase hover:bg-styleswap-accent hover:shadow-neo hover:-translate-y-0.5 active:translate-y-0.5 transition-all">
+              <Link href={`/shop/${shopSlug}`} className="px-4 py-2 bg-white border-4 border-black shadow-neo-sm text-black text-sm font-black uppercase hover:bg-tryonity-accent hover:shadow-neo hover:-translate-y-0.5 active:translate-y-0.5 transition-all">
                 Change
               </Link>
             </div>
@@ -291,10 +291,10 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
             {/* Step 1 — Person photo */}
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-styleswap-accent border-4 border-black flex items-center justify-center shadow-neo-sm rounded-neo">
+                <div className="w-10 h-10 bg-tryonity-accent border-4 border-black flex items-center justify-center shadow-neo-sm rounded-neo">
                   <span className="text-black text-xl font-black">1</span>
                 </div>
-                <h2 className="text-styleswap-text text-3xl font-black uppercase tracking-tighter">Your Photo</h2>
+                <h2 className="text-tryonity-text text-3xl font-black uppercase tracking-tighter">Your Photo</h2>
               </div>
               <UploadZone
                 label="Full Body Image"
@@ -314,7 +314,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
                   <div className="w-10 h-10 bg-[#00cc00] border-4 border-black flex items-center justify-center shadow-neo-sm rounded-neo">
                     <span className="text-black text-xl font-black">2</span>
                   </div>
-                  <h2 className="text-styleswap-text text-3xl font-black uppercase tracking-tighter">Garment</h2>
+                  <h2 className="text-tryonity-text text-3xl font-black uppercase tracking-tighter">Garment</h2>
                 </div>
                 <UploadZone
                   label="Flat or Hanger"
@@ -331,7 +331,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
 
           {/* Submit error */}
           {submitError && (
-            <div className="flex items-start gap-3 px-5 py-4 bg-styleswap-error border-4 border-black shadow-neo">
+            <div className="flex items-start gap-3 px-5 py-4 bg-tryonity-error border-4 border-black shadow-neo">
               <svg className="w-6 h-6 text-black flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -341,7 +341,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
         </div>
 
         {/* Sticky Bottom Action Bar */}
-        <div className="sticky bottom-0 z-20 p-5 bg-styleswap-bg border-t-4 border-styleswap-border shadow-[0_-4px_0_0_rgba(0,0,0,1)]">
+        <div className="sticky bottom-0 z-20 p-5 bg-tryonity-bg border-t-4 border-tryonity-border shadow-[0_-4px_0_0_rgba(0,0,0,1)]">
           <button
             id="generate-tryon-btn"
             type="button"
@@ -349,7 +349,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
             disabled={!canSubmit}
             className={`w-full py-4 flex items-center justify-center gap-3 text-lg font-black uppercase tracking-wider transition-all duration-150 border-4 border-black rounded-neo ${
               canSubmit 
-                ? 'bg-styleswap-accent text-black shadow-neo hover:shadow-neo-lg hover:-translate-y-1 active:translate-y-1 active:shadow-none'
+                ? 'bg-tryonity-accent text-black shadow-neo hover:shadow-neo-lg hover:-translate-y-1 active:translate-y-1 active:shadow-none'
                 : 'bg-[#d1d5db] text-gray-500 shadow-none cursor-not-allowed'
             }`}
           >
@@ -360,7 +360,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
           </button>
           
           {!canSubmit && !submitting && (
-            <p className="text-center text-styleswap-border text-sm font-black uppercase tracking-wider mt-4">
+            <p className="text-center text-tryonity-border text-sm font-black uppercase tracking-wider mt-4">
               {!personFile
                 ? 'Upload photo to continue'
                 : !preselectedProduct && !isMultiMode && !clothFile

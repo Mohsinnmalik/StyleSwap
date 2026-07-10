@@ -66,16 +66,16 @@ export default function SessionMultiPage() {
 
   if (codes.length === 0) {
     return (
-      <div className="min-h-screen bg-styleswap-bg flex items-center justify-center">
+      <div className="min-h-screen bg-tryonity-bg flex items-center justify-center">
         <p className="text-black font-black text-xl uppercase">No session codes found.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-styleswap-bg flex flex-col">
+    <div className="min-h-screen bg-tryonity-bg flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-20 px-5 pt-8 pb-4 flex items-center justify-between bg-styleswap-bg border-b-4 border-styleswap-border shadow-neo-sm">
+      <header className="sticky top-0 z-20 px-5 pt-8 pb-4 flex items-center justify-between bg-tryonity-bg border-b-4 border-tryonity-border shadow-neo-sm">
         <div className="flex items-center gap-4">
           <Link href={`/shop/${params.slug}`} className="btn-icon">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,8 +83,8 @@ export default function SessionMultiPage() {
             </svg>
           </Link>
           <div>
-            <p className="text-styleswap-accent text-xs font-black uppercase tracking-widest border-b-2 border-black inline-block">StyleSwap AI</p>
-            <h1 className="text-styleswap-text text-2xl font-black uppercase tracking-tighter">Your Looks</h1>
+            <p className="text-tryonity-accent text-xs font-black uppercase tracking-widest border-b-2 border-black inline-block">Tryonity AI</p>
+            <h1 className="text-tryonity-text text-2xl font-black uppercase tracking-tighter">Your Looks</h1>
           </div>
         </div>
         <div className="bg-[#ffde59] border-4 border-black px-3 py-1 shadow-neo-sm">
@@ -97,7 +97,7 @@ export default function SessionMultiPage() {
         <div className="px-5 pt-4">
           <div className="w-full bg-gray-200 border-4 border-black h-4 shadow-neo-sm">
             <div
-              className="bg-styleswap-accent h-full transition-all duration-500"
+              className="bg-tryonity-accent h-full transition-all duration-500"
               style={{ width: `${(doneCount / totalCount) * 100}%` }}
             />
           </div>
@@ -122,7 +122,7 @@ export default function SessionMultiPage() {
               <img src={r.image_url} alt={`Look ${i + 1}`} className="w-full h-full object-cover" />
             ) : r.status === 'polling' ? (
               <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                <div className="w-6 h-6 border-4 border-black border-t-styleswap-accent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-black border-t-tryonity-accent rounded-full animate-spin" />
               </div>
             ) : (
               <div className="w-full h-full bg-red-100 flex items-center justify-center">
@@ -158,7 +158,7 @@ export default function SessionMultiPage() {
           </div>
         ) : (
           <div className="w-full max-w-md border-4 border-black shadow-neo bg-gray-100 flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-12 h-12 border-8 border-black border-t-styleswap-accent rounded-full animate-spin" />
+            <div className="w-12 h-12 border-8 border-black border-t-tryonity-accent rounded-full animate-spin" />
             <p className="text-black font-black text-lg uppercase animate-pulse">Generating Look {activeIdx + 1}...</p>
           </div>
         )}
@@ -190,7 +190,7 @@ export default function SessionMultiPage() {
         {/* Try again */}
         <Link
           href={`/shop/${params.slug}`}
-          className="mt-4 w-full max-w-md flex items-center justify-center gap-2 bg-white border-4 border-black text-black font-black uppercase py-4 shadow-neo hover:bg-styleswap-accent hover:-translate-y-1 hover:shadow-neo-lg transition-all"
+          className="mt-4 w-full max-w-md flex items-center justify-center gap-2 bg-white border-4 border-black text-black font-black uppercase py-4 shadow-neo hover:bg-tryonity-accent hover:-translate-y-1 hover:shadow-neo-lg transition-all"
         >
           ← Browse More Outfits
         </Link>
