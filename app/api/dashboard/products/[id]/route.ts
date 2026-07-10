@@ -110,7 +110,13 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   if (!shopId || !mongoose.Types.ObjectId.isValid(shopId) || !mongoose.Types.ObjectId.isValid(params.id)) {
     return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
   }
-  const { is_active } = await request.json() as { is_active: boolean };
+  let is_active: boolean;
+  try {
+    ({ is_active } = await request.json() as { is_active: boolean });
+    if (typeof is_active !== 'boolean') throw new Error('is_active must be a boolean');
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
 
   await connectDB();
   const product = await Product.findOneAndUpdate(

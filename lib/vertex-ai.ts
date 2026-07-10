@@ -3,16 +3,16 @@ import { connectDB } from '@/lib/mongodb';
 import { TryonSession } from '@/models/TryonSession';
 import { uploadImage } from '@/lib/cloudinary';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
 // Serverless Deployment Fix: Vercel does not allow uploading JSON files securely.
 // If GOOGLE_CREDENTIALS (the raw JSON string) is provided in the environment variables,
-// write it to a temporary file and point the SDK to it.
+// write it to a temporary file and point the SDK to it. Written unconditionally so
+// a rotated key is never shadowed by a stale cached file.
 if (process.env.GOOGLE_CREDENTIALS) {
-  const tmpKeyPath = path.join('/tmp', 'google-credentials.json');
-  if (!fs.existsSync(tmpKeyPath)) {
-    fs.writeFileSync(tmpKeyPath, process.env.GOOGLE_CREDENTIALS);
-  }
+  const tmpKeyPath = path.join(os.tmpdir(), 'google-credentials.json');
+  fs.writeFileSync(tmpKeyPath, process.env.GOOGLE_CREDENTIALS);
   process.env.GOOGLE_APPLICATION_CREDENTIALS = tmpKeyPath;
 }
 
@@ -113,13 +113,12 @@ export async function generateTryOnImage(
     
     try {
       await connectDB();
-      const placeholder = `https://placehold.co/600x900/0A0A0A/3B82F6?text=Vertex+AI+Error`;
       await TryonSession.findOneAndUpdate(
         { session_code: sessionCode },
-        { status: 'done', result_image_url: placeholder }
+        { status: 'error' }
       );
     } catch (dbErr) {
-      console.error(`[vertex-ai] Failed to update session ${sessionCode} to fallback status:`, dbErr);
+      console.error(`[vertex-ai] Failed to update session ${sessionCode} to error status:`, dbErr);
     }
   }
 }

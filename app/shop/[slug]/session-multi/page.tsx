@@ -3,7 +3,7 @@
 // This page is intentionally a client component to handle dynamic polling.
 // It accepts ?codes=code1,code2,code3 and shows all results side by side.
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useParams } from 'next/navigation';
 
@@ -24,37 +24,41 @@ export default function SessionMultiPage() {
   );
   const [activeIdx, setActiveIdx] = useState(0);
 
+  // Ref mirror so pollAll always sees the latest results without re-creating
+  // the interval (stale-closure fix)
+  const resultsRef = useRef(results);
+  useEffect(() => { resultsRef.current = results; }, [results]);
+
   const pollAll = useCallback(async () => {
     const updated = await Promise.all(
-      codes.map(async (code, i) => {
-        const current = results[i];
-        if (current?.status === 'done' || current?.status === 'error') return current;
+      resultsRef.current.map(async (item) => {
+        if (item.status === 'done' || item.status === 'error') return item;
         try {
-          const res  = await fetch(`/api/tryon/session?code=${code}`);
+          const res  = await fetch(`/api/tryon/session?code=${encodeURIComponent(item.code)}`);
           const data = await res.json();
           if (data.status === 'done' && data.image_url) {
-            return { code, status: 'done' as const, image_url: data.image_url };
-          } else if (data.status === 'expired' || data.status === 'not_found') {
-            return { code, status: 'error' as const, image_url: null };
+            return { ...item, status: 'done' as const, image_url: data.image_url };
+          } else if (data.status === 'expired' || data.status === 'not_found' || data.status === 'error') {
+            return { ...item, status: 'error' as const };
           }
-          return { code, status: 'polling' as const, image_url: null };
+          return item;
         } catch {
-          return { code, status: 'polling' as const, image_url: null };
+          return item; // keep last known state on transient failures
         }
       })
     );
     setResults(updated);
-  }, [codes, results]);
+  }, []);
+
+  const allSettled = results.length > 0 && results.every((r) => r.status !== 'polling');
 
   useEffect(() => {
-    if (codes.length === 0) return;
-    const interval = setInterval(() => {
-      pollAll();
-    }, 3000);
+    if (codes.length === 0 || allSettled) return;
     pollAll();
+    const interval = setInterval(pollAll, 3000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [codes.length]);
+  }, [codesParam, allSettled, pollAll]);
 
   const doneCount    = results.filter((r) => r.status === 'done').length;
   const totalCount   = results.length;

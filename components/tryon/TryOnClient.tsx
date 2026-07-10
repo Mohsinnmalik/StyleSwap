@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import CameraCapture from './CameraCapture';
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -28,10 +29,10 @@ function validateFile(file: File): string | null {
 }
 
 function UploadZone({
-  label, hint, preview, error, onSelect, disabled,
+  label, hint, preview, error, onSelect, onCameraClick, disabled,
 }: {
   label: string; hint: string; preview: string | null; error: string | null;
-  onSelect: (file: File) => void; disabled?: boolean;
+  onSelect: (file: File) => void; onCameraClick?: () => void; disabled?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -98,9 +99,27 @@ function UploadZone({
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) onSelect(f);
+          e.target.value = '';
         }}
         disabled={disabled}
       />
+
+      {onCameraClick && (
+        <button
+          type="button"
+          onClick={onCameraClick}
+          disabled={disabled}
+          className={`w-full py-3 flex items-center justify-center gap-3 border-4 border-black rounded-neo bg-white text-black text-base font-black uppercase tracking-wider shadow-neo-sm transition-all ${
+            disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-styleswap-accent hover:-translate-y-0.5 hover:shadow-neo active:translate-y-0.5 active:shadow-none'
+          }`}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          {preview ? 'Retake with Camera' : 'Take a Photo'}
+        </button>
+      )}
     </div>
   );
 }
@@ -116,9 +135,14 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
   const [clothError,    setClothError]    = useState<string | null>(null);
   const [submitting,    setSubmitting]    = useState(false);
   const [submitError,   setSubmitError]   = useState<string | null>(null);
+  const [cameraTarget,  setCameraTarget]  = useState<'person' | 'cloth' | null>(null);
 
   const productImg = preselectedProduct?.images.find((i) => i.is_primary)?.url
     ?? preselectedProduct?.images[0]?.url ?? '';
+
+  // Revoke object URLs when previews change or on unmount
+  useEffect(() => () => { if (personPreview) URL.revokeObjectURL(personPreview); }, [personPreview]);
+  useEffect(() => () => { if (clothPreview) URL.revokeObjectURL(clothPreview); }, [clothPreview]);
 
   const handleFileSelect = useCallback((
     file: File,
@@ -136,6 +160,15 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
       setPreview(null);
     }
   }, []);
+
+  const handleCameraCapture = useCallback((file: File) => {
+    if (cameraTarget === 'person') {
+      handleFileSelect(file, setPersonFile, setPersonPreview, setPersonError);
+    } else if (cameraTarget === 'cloth') {
+      handleFileSelect(file, setClothFile, setClothPreview, setClothError);
+    }
+    setCameraTarget(null);
+  }, [cameraTarget, handleFileSelect]);
 
   // Multi-mode: one product per person photo
   const isMultiMode = !!multiProducts && multiProducts.length > 1;
@@ -160,11 +193,17 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
       fd.append('cloth_image', clothFile!);
     }
 
-    const res = await fetch('/api/tryon/process', { method: 'POST', body: fd });
-    const data = await res.json() as { code?: string; error?: string };
-
-    if (!res.ok || !data.code) {
-      setSubmitError(data.error ?? 'Something went wrong. Please try again.');
+    let data: { code?: string; error?: string };
+    try {
+      const res = await fetch('/api/tryon/process', { method: 'POST', body: fd });
+      data = await res.json();
+      if (!res.ok || !data.code) {
+        setSubmitError(data.error ?? 'Something went wrong. Please try again.');
+        setSubmitting(false);
+        return;
+      }
+    } catch {
+      setSubmitError('Network error. Please check your connection and try again.');
       setSubmitting(false);
       return;
     }
@@ -263,6 +302,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
                 preview={personPreview}
                 error={personError}
                 onSelect={(f) => handleFileSelect(f, setPersonFile, setPersonPreview, setPersonError)}
+                onCameraClick={() => setCameraTarget('person')}
                 disabled={submitting}
               />
             </div>
@@ -282,6 +322,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
                   preview={clothPreview}
                   error={clothError}
                   onSelect={(f) => handleFileSelect(f, setClothFile, setClothPreview, setClothError)}
+                  onCameraClick={() => setCameraTarget('cloth')}
                   disabled={submitting}
                 />
               </div>
@@ -330,6 +371,13 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
         </div>
 
       </div>
+
+      {cameraTarget && (
+        <CameraCapture
+          onCapture={handleCameraCapture}
+          onClose={() => setCameraTarget(null)}
+        />
+      )}
     </div>
   );
 }

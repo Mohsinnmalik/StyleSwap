@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import mongoose from 'mongoose';
 import { connectDB } from '@/lib/mongodb';
 import { Shop, IShop } from '@/models/Shop';
@@ -50,7 +51,12 @@ export async function POST(request: NextRequest) {
 
   const productIds = multiProductIds.length > 0 ? multiProductIds : (singleProductId ? [singleProductId] : []);
 
-  if (!shopId) return NextResponse.json({ error: 'shop_id is required.' }, { status: 400 });
+  if (!shopId || !mongoose.Types.ObjectId.isValid(shopId)) {
+    return NextResponse.json({ error: 'A valid shop_id is required.' }, { status: 400 });
+  }
+  if (!productIds.every((id) => mongoose.Types.ObjectId.isValid(id))) {
+    return NextResponse.json({ error: 'Invalid product id.' }, { status: 400 });
+  }
   if (!(personImage instanceof File)) return NextResponse.json({ error: 'Person image is required.' }, { status: 400 });
   if (productIds.length === 0 && !(clothImageF instanceof File)) return NextResponse.json({ error: 'Cloth is required.' }, { status: 400 });
 
@@ -80,12 +86,21 @@ export async function POST(request: NextRequest) {
     let firstProductId: string | undefined = undefined;
 
     if (productIds.length > 0) {
-      // Use product primary images
-      const products = await Product.find({ _id: { $in: productIds } }).lean() as unknown as IProduct[];
+      // Use product primary images — only active products belonging to this shop
+      const products = await Product.find({
+        _id: { $in: productIds },
+        shop_id: shop._id,
+        is_active: true,
+      }).lean() as unknown as IProduct[];
       if (!products || products.length === 0) return NextResponse.json({ error: 'Products not found.' }, { status: 404 });
-      
+
       // Keep them in the order requested if possible, or just map what we found
-      clothImageUrls = products.map((p) => p.images.find((i) => i.is_primary)?.url ?? p.images[0]?.url ?? '');
+      clothImageUrls = products
+        .map((p) => p.images.find((i) => i.is_primary)?.url ?? p.images[0]?.url ?? '')
+        .filter(Boolean);
+      if (clothImageUrls.length === 0) {
+        return NextResponse.json({ error: 'Selected products have no images.' }, { status: 400 });
+      }
       firstProductId = products[0]._id.toString();
     } else {
       // Upload own cloth image
@@ -113,10 +128,13 @@ export async function POST(request: NextRequest) {
       expires_at: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-    // Return code immediately — fire-and-forget background generation
-    // In production on Vercel, use waitUntil() from @vercel/functions
-    generateTryOnImage(code, personUrl, clothImageUrls).catch((err) =>
-      console.error(`[tryon] Vertex AI Background generation failed for ${code}:`, err)
+    // Return code immediately — waitUntil keeps the lambda alive on Vercel
+    // until background generation finishes (a bare fire-and-forget promise
+    // would be frozen as soon as the response is sent).
+    waitUntil(
+      generateTryOnImage(code, personUrl, clothImageUrls).catch((err) =>
+        console.error(`[tryon] Vertex AI Background generation failed for ${code}:`, err)
+      )
     );
 
     return NextResponse.json({ success: true, code }, { status: 200 });

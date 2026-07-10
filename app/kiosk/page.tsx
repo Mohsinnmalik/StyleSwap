@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import QRCode from 'qrcode';
 import { formatCountdown } from '@/lib/utils';
 
 type KioskState = 'idle' | 'processing' | 'result' | 'error';
@@ -16,9 +17,22 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
   const [code, setCode] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const TRYON_URL = 'https://style-swap-eight.vercel.app/shop/fashon-culture/tryon';
-  const KIOSK_URL = 'https://style-swap-eight.vercel.app/kiosk';
-  const qrSrc = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(TRYON_URL)}&choe=UTF-8`;
+  // URLs derive from the current deployment; the shop for the QR code comes
+  // from ?shop=<slug> (e.g. /kiosk?shop=my-shop), falling back to the homepage.
+  const [tryonUrl, setTryonUrl] = useState('');
+  const [kioskUrl, setKioskUrl] = useState('');
+  const [qrSrc,    setQrSrc]    = useState('');
+
+  useEffect(() => {
+    const origin = window.location.origin;
+    const slug = new URLSearchParams(window.location.search).get('shop');
+    const target = slug ? `${origin}/shop/${slug}/tryon` : origin;
+    setTryonUrl(target);
+    setKioskUrl(`${origin}/kiosk`);
+    QRCode.toDataURL(target, { width: 400, margin: 1 })
+      .then(setQrSrc)
+      .catch(() => setQrSrc(''));
+  }, []);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
@@ -41,13 +55,17 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
       <div className="flex items-start gap-16">
         {/* QR Code panel */}
         <div className="flex flex-col items-center gap-4">
-          <div className="bg-white p-4 rounded-2xl shadow-2xl border-4 border-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={qrSrc} alt="Try-On QR Code" width={180} height={180} />
+          <div className="bg-white p-4 rounded-2xl shadow-2xl border-4 border-white w-[212px] h-[212px] flex items-center justify-center">
+            {qrSrc ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={qrSrc} alt="Try-On QR Code" width={180} height={180} />
+            ) : (
+              <div className="w-[180px] h-[180px] bg-gray-200 animate-pulse rounded" />
+            )}
           </div>
           <div className="text-center">
             <p className="text-styleswap-accent text-sm font-bold uppercase tracking-widest mb-1">📱 Scan to Try On</p>
-            <p className="text-styleswap-muted text-xs max-w-[200px] text-center leading-relaxed">{TRYON_URL}</p>
+            <p className="text-styleswap-muted text-xs max-w-[200px] text-center leading-relaxed">{tryonUrl}</p>
           </div>
         </div>
 
@@ -99,7 +117,7 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
           </button>
 
           <p className="text-styleswap-subtle text-sm text-center">
-            Kiosk URL: <span className="text-styleswap-muted">{KIOSK_URL}</span>
+            Kiosk URL: <span className="text-styleswap-muted">{kioskUrl}</span>
           </p>
         </div>
       </div>
@@ -305,9 +323,13 @@ export default function KioskPage() {
         setImageUrl(data.image_url);
         setExpiresAt(data.expires_at ? new Date(data.expires_at) : new Date(Date.now() + 5 * 60 * 1000));
         setState('result');
-      } else if (data.status === 'not_found' || data.status === 'expired') {
+      } else if (data.status === 'not_found' || data.status === 'expired' || data.status === 'error') {
         stopPolling();
-        setErrorMsg(data.status === 'expired' ? 'Session has expired' : 'Code not found or expired');
+        setErrorMsg(
+          data.status === 'expired' ? 'Session has expired'
+          : data.status === 'error' ? 'Generation failed — please try again'
+          : 'Code not found or expired'
+        );
         setState('error');
       }
       // 'processing' → keep polling

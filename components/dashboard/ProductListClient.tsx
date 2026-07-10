@@ -26,21 +26,32 @@ export default function ProductListClient({ initialProducts }: { initialProducts
 
   const handleToggle = async (id: string, current: boolean) => {
     setProducts((prev) => prev.map((p) => p._id === id ? { ...p, is_active: !current } : p));
-    await fetch(`/api/dashboard/products/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_active: !current }),
-    });
+    try {
+      const res = await fetch(`/api/dashboard/products/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !current }),
+      });
+      if (!res.ok) throw new Error('Toggle failed');
+    } catch {
+      // Revert the optimistic update so the UI matches the DB
+      setProducts((prev) => prev.map((p) => p._id === id ? { ...p, is_active: current } : p));
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this product? This cannot be undone.')) return;
     setDeleting(id);
-    const res = await fetch(`/api/dashboard/products/${id}`, { method: 'DELETE' });
-    if (res.ok) {
-      setProducts((prev) => prev.filter((p) => p._id !== id));
+    try {
+      const res = await fetch(`/api/dashboard/products/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setProducts((prev) => prev.filter((p) => p._id !== id));
+      }
+    } catch {
+      // network error — leave the product in the list
+    } finally {
+      setDeleting(null);
     }
-    setDeleting(null);
   };
 
   if (products.length === 0) {

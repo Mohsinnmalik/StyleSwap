@@ -6,6 +6,8 @@ import Image from 'next/image';
 
 const CATEGORIES = ['shirt', 'kurta', 'jacket', 'trouser', 'suit', 'other'] as const;
 const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'];
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 interface ProductImage { url: string; public_id: string; is_primary: boolean }
 interface ProductData {
@@ -35,7 +37,9 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   const [sizes,       setSizes]       = useState<string[]>(product?.sizes   ?? []);
   const [colorInput,  setColorInput]  = useState('');
   const [colors,      setColors]      = useState<string[]>(product?.colors  ?? []);
-  const [primaryIdx,  setPrimaryIdx]  = useState(0);
+  const [primaryIdx,  setPrimaryIdx]  = useState(() =>
+    Math.max(0, (product?.images ?? []).findIndex((i) => i.is_primary))
+  );
 
   // Existing images (edit mode) to keep
   const [keepImages, setKeepImages]   = useState<ProductImage[]>(product?.images ?? []);
@@ -50,25 +54,42 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
     const arr = Array.from(files).slice(0, 5 - keepImages.length - newFiles.length);
-    setNewFiles((prev) => [...prev, ...arr]);
-    arr.forEach((f) => {
-      const reader = new FileReader();
-      reader.onload = (e) => setNewPreviews((prev) => [...prev, e.target?.result as string]);
-      reader.readAsDataURL(f);
+    const valid: File[] = [];
+    for (const f of arr) {
+      if (!ALLOWED_TYPES.includes(f.type)) { setError(`${f.name}: only JPG, PNG, or WebP allowed.`); continue; }
+      if (f.size > MAX_FILE_SIZE)          { setError(`${f.name}: must be under 5MB.`); continue; }
+      valid.push(f);
+    }
+    if (valid.length === 0) return;
+    // Previews built synchronously so they stay index-aligned with newFiles
+    setNewFiles((prev) => [...prev, ...valid]);
+    setNewPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+  };
+
+  const totalImages = keepImages.length + newFiles.length;
+
+  // primaryIdx is an absolute index over [keepImages, ...newFiles]
+  const adjustPrimaryAfterRemove = (removedAbsIdx: number) => {
+    setPrimaryIdx((p) => {
+      if (removedAbsIdx === p) return 0;
+      const next = removedAbsIdx < p ? p - 1 : p;
+      return Math.min(next, Math.max(0, totalImages - 2));
     });
   };
 
   const removeKeepImage = (idx: number) => {
     setKeepImages((prev) => prev.filter((_, i) => i !== idx));
-    if (primaryIdx > 0) setPrimaryIdx((p) => p - 1);
+    adjustPrimaryAfterRemove(idx);
   };
 
   const removeNewFile = (idx: number) => {
     setNewFiles((prev) => prev.filter((_, i) => i !== idx));
-    setNewPreviews((prev) => prev.filter((_, i) => i !== idx));
+    setNewPreviews((prev) => {
+      URL.revokeObjectURL(prev[idx]);
+      return prev.filter((_, i) => i !== idx);
+    });
+    adjustPrimaryAfterRemove(keepImages.length + idx);
   };
-
-  const totalImages = keepImages.length + newFiles.length;
 
   const toggleSize = (s: string) => {
     setSizes((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
@@ -102,20 +123,25 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
 
     if (mode === 'edit') {
       fd.append('keepImages', JSON.stringify(keepImages));
+      fd.append('is_active', String(product?.is_active ?? true));
     }
     newFiles.forEach((f) => fd.append('images', f));
 
     const url    = mode === 'create' ? '/api/dashboard/products' : `/api/dashboard/products/${product!._id}`;
     const method = mode === 'create' ? 'POST' : 'PUT';
 
-    const res = await fetch(url, { method, body: fd });
-    const data = await res.json() as { error?: string };
-
-    setSubmitting(false);
-
-    if (!res.ok) {
-      setError(data.error ?? 'Something went wrong');
+    try {
+      const res = await fetch(url, { method, body: fd });
+      const data = await res.json() as { error?: string };
+      if (!res.ok) {
+        setError(data.error ?? 'Something went wrong');
+        return;
+      }
+    } catch {
+      setError('Network error. Please check your connection and try again.');
       return;
+    } finally {
+      setSubmitting(false);
     }
 
     router.push('/dashboard/products');

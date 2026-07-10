@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,19 +17,24 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
 
-    setLoading(false);
+      if (result?.error) {
+        setError('Invalid email or password. Please try again.');
+        return;
+      }
 
-    if (result?.error) {
-      setError('Invalid email or password. Please try again.');
-    } else {
       router.push('/dashboard');
       router.refresh();
+    } catch {
+      setError('Failed to connect to the server. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

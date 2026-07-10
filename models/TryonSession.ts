@@ -1,6 +1,6 @@
 import { Schema, models, model, Document, Types } from 'mongoose';
 
-export type SessionStatus = 'processing' | 'done' | 'expired';
+export type SessionStatus = 'processing' | 'done' | 'expired' | 'error';
 export type ClothSourceType = 'catalogue' | 'upload';
 
 export interface ITryonSession extends Document {
@@ -33,7 +33,7 @@ const TryonSessionSchema = new Schema<ITryonSession>({
     image_url:  { type: String, required: true },
     public_id:  { type: String, default: null },
   },
-  status:           { type: String, enum: ['processing', 'done', 'expired'], default: 'processing' },
+  status:           { type: String, enum: ['processing', 'done', 'expired', 'error'], default: 'processing' },
   result_image_url: { type: String, default: null },
   created_at:       { type: Date, default: Date.now },
   expires_at:       { type: Date, default: () => new Date(Date.now() + 10 * 60 * 1000) },

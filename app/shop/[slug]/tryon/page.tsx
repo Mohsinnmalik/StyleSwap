@@ -23,14 +23,28 @@ export default async function TryOnPage({ params, searchParams }: Props) {
         name: p.name,
         images: p.images,
       }));
-      return (
-        <TryOnClient
-          shopSlug={params.slug}
-          shopId={shop._id.toString()}
-          preselectedProduct={null}
-          multiProducts={multiProducts}
-        />
-      );
+      // A single selected product falls through to single-product mode —
+      // the client treats multiProducts of length 1 as "no selection".
+      if (multiProducts.length === 1) {
+        return (
+          <TryOnClient
+            shopSlug={params.slug}
+            shopId={shop._id.toString()}
+            preselectedProduct={multiProducts[0]}
+            multiProducts={null}
+          />
+        );
+      }
+      if (multiProducts.length > 1) {
+        return (
+          <TryOnClient
+            shopSlug={params.slug}
+            shopId={shop._id.toString()}
+            preselectedProduct={null}
+            multiProducts={multiProducts}
+          />
+        );
+      }
     }
   }
 

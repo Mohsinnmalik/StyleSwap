@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { formatCountdown } from '@/lib/utils';
 
-const KIOSK_URL = 'https://style-swap-eight.vercel.app/kiosk';
+const KIOSK_URL = '/kiosk';
+const TERMINAL_STATUSES = ['done', 'expired', 'not_found', 'error'];
 
 interface SessionData {
   status:           string;
@@ -27,23 +28,28 @@ function SessionPageContent() {
   const poll = useCallback(async () => {
     if (!code) return;
     try {
-      const res = await fetch(`/api/tryon/session?code=${code}`);
+      const res = await fetch(`/api/tryon/session?code=${encodeURIComponent(code)}`);
       const json: SessionData = await res.json();
+      // Skip transient rate-limit responses; keep last known state
+      if (json.status === 'rate_limited') return;
       setData(json);
       if (json.expires_at) {
         setTimeLeft(new Date(json.expires_at).getTime() - Date.now());
       }
     } catch {
-      // ignore
+      // ignore transient network errors; next poll retries
     }
   }, [code]);
 
+  const status = data?.status;
+
   useEffect(() => {
     if (!code) { setError('No session code provided.'); return; }
+    if (status && TERMINAL_STATUSES.includes(status)) return; // stop polling once terminal
     poll();
     const interval = setInterval(poll, 3000);
     return () => clearInterval(interval);
-  }, [code, poll]);
+  }, [code, poll, status]);
 
   // Countdown tick
   useEffect(() => {
@@ -54,10 +60,16 @@ function SessionPageContent() {
     return () => clearInterval(tick);
   }, [data?.expires_at]);
 
-  if (error) {
+  const terminalMessage =
+    status === 'not_found' ? 'Session not found. Please check the code or start a new try-on.'
+    : status === 'expired' ? 'This session has expired. Please start a new try-on.'
+    : status === 'error'   ? 'Sorry, generating your try-on failed. Please go back and try again.'
+    : null;
+
+  if (error || terminalMessage) {
     return (
       <div className="min-h-screen bg-styleswap-bg flex flex-col items-center justify-center px-6 gap-4">
-        <p className="text-red-400 text-center font-bold">{error}</p>
+        <p className="text-red-400 text-center font-bold">{error || terminalMessage}</p>
       </div>
     );
   }

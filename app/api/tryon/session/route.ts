@@ -2,8 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { TryonSession, ITryonSession } from '@/models/TryonSession';
 import { isValidCode } from '@/lib/utils';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
+  // Generous limit (legit clients poll every ~3s) that still makes
+  // brute-forcing the 6-digit code space impractical.
+  const rl = checkRateLimit(getClientIp(request), {
+    bucket: 'session-lookup',
+    windowMs: 60 * 1000,
+    maxRequests: 60,
+  });
+  if (rl.limited) {
+    return NextResponse.json(
+      { status: 'rate_limited' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetInMs / 1000)) } }
+    );
+  }
+
   const code = request.nextUrl.searchParams.get('code')?.trim() ?? '';
 
   if (!isValidCode(code)) {
@@ -23,6 +38,10 @@ export async function GET(request: NextRequest) {
     }
 
     if (session.status === 'expired') return NextResponse.json({ status: 'expired' });
+
+    if (session.status === 'error') {
+      return NextResponse.json({ status: 'error' });
+    }
 
     if (session.status === 'done') {
       return NextResponse.json({

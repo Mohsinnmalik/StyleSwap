@@ -89,6 +89,18 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error: any) {
+    // Duplicate key from a concurrent signup racing past the findOne checks
+    if (error?.code === 11000) {
+      const dupField = Object.keys(error.keyPattern ?? {})[0];
+      return NextResponse.json(
+        {
+          error: dupField === 'email'
+            ? 'An account with this email already exists'
+            : 'That shop name is taken. Please try a slightly different one.',
+        },
+        { status: 409 }
+      );
+    }
     console.error('Signup error:', error);
     return NextResponse.json(
       { error: 'An unexpected error occurred during signup. Please try again.' },
