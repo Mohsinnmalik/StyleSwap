@@ -61,7 +61,7 @@ export default function LandingPage() {
             Neural Precision
           </h2>
           <p className="font-sans text-xs md:text-sm leading-loose tracking-[0.2em] uppercase text-white/70 max-w-md mx-auto">
-            The world's most advanced digital fitting engine. By utilizing bleeding-edge vertex mapping and physical simulations, we create an exact digital reflection of haute couture. 
+            The world&apos;s most advanced digital fitting engine. By utilizing bleeding-edge vertex mapping and physical simulations, we create an exact digital reflection of haute couture. 
             <br/><br/>
             Zero estimates. Absolute perfection.
           </p>
