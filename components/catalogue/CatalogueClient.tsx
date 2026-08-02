@@ -1,221 +1,222 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/lib/utils';
 
-const FILTER_LABELS: Record<string, string> = {
-  all: 'All', shirt: 'Shirts', kurta: 'Kurtas', jacket: 'Jackets',
-  trouser: 'Trousers', suit: 'Suits', other: 'Other',
-};
-
-const MAX_SELECTION = 3;
-
+interface ProductImage { url: string; public_id: string; is_primary: boolean }
 interface Product {
-  _id: string; name: string; category: string; price: number;
-  images: { url: string; public_id: string; is_primary: boolean }[];
+  _id: string;
+  name: string;
+  category: string;
+  price: number;
+  images: ProductImage[];
   sizes: string[];
 }
+interface Props {
+  shop: { _id: string; name: string; slug: string; logoUrl?: string };
+  products?: Product[];
+  initialProducts?: Product[];
+  categories?: string[];
+}
 
-interface Shop { _id: string; name: string; slug: string; description: string; logo_url: string }
+export default function CatalogueClient({ shop, products, initialProducts, categories }: Props) {
+  const [selectedCat, setSelectedCat] = useState('ALL');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-export default function CatalogueClient({
-  shop, initialProducts,
-}: { shop: Shop; initialProducts: Product[] }) {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const router = useRouter();
+  const productList = products || initialProducts || [];
+  const categoryList = categories && categories.length > 0
+    ? categories
+    : Array.from(new Set(productList.map((p) => p.category.toUpperCase())));
+
+  const filtered = selectedCat === 'ALL'
+    ? productList
+    : productList.filter((p) => p.category.toUpperCase() === selectedCat.toUpperCase());
 
   const toggleSelect = (id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) { next.delete(id); }
-      else if (next.size < MAX_SELECTION) { next.add(id); }
-      return next;
-    });
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
-
-  const handleTryAll = () => {
-    const ids = Array.from(selected).join(',');
-    router.push(`/shop/${shop.slug}/tryon?products=${ids}`);
-  };
-
-  const selectedCount = selected.size;
-
-  const categories = useMemo(() => {
-    const cats = new Set(initialProducts.map((p) => p.category));
-    return ['all', ...Array.from(cats)];
-  }, [initialProducts]);
-
-  const filtered = useMemo(() =>
-    activeFilter === 'all' ? initialProducts : initialProducts.filter((p) => p.category === activeFilter),
-    [initialProducts, activeFilter]
-  );
-
-  const primaryImg = (p: Product) => p.images.find((i) => i.is_primary)?.url ?? p.images[0]?.url ?? '';
 
   return (
-    <div className="min-h-screen bg-tryonity-bg font-sans">
-      <div className="w-full min-h-screen flex flex-col relative bg-tryonity-surface pb-24">
-      {/* Header */}
-      <header className="px-4 pt-10 pb-5 border-b-4 border-tryonity-border bg-tryonity-bg shadow-neo-sm sticky top-0 z-20">
-        <div className="flex items-center gap-3 mb-1">
-          {shop.logo_url && (
-            <div className="w-12 h-12 rounded-neo overflow-hidden bg-white border-4 border-black flex-shrink-0 shadow-neo-sm">
-              <Image src={shop.logo_url} alt={shop.name} width={48} height={48} className="w-full h-full object-cover" />
-            </div>
-          )}
-          <div>
-            <h1 className="text-tryonity-text font-black text-2xl uppercase tracking-tighter leading-tight">{shop.name}</h1>
-            {shop.description && <p className="text-tryonity-subtle text-sm font-bold mt-0.5">{shop.description}</p>}
-          </div>
-        </div>
+    <div
+      className="min-h-screen text-white font-sans selection:bg-white/30 pb-36 animate-fade-in relative overflow-x-hidden"
+      style={{ background: '#070708' }} // Pure landing page obsidian black
+    >
+      {/* ── BACKGROUND LAYER: Fashion editorial photo blurred ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2564&auto=format&fit=crop')",
+          backgroundPosition: 'center 20%',
+          backgroundSize: 'cover',
+          opacity: 0.18,
+          filter: 'grayscale(100%) brightness(35%) contrast(110%) blur(4px)',
+        }}
+      />
 
-        {/* Accent line */}
-        <div className="mt-4 flex items-center gap-2">
-          <div className="w-3 h-3 bg-[#00cc00] border-2 border-black rounded-none shadow-neo-sm" />
-          <p className="text-black font-black text-xs uppercase tracking-widest border-b-2 border-black inline-block">Virtual Try-On</p>
-          {selectedCount > 0 && (
-            <span className="ml-auto text-xs font-black uppercase tracking-wider bg-tryonity-accent text-black border-2 border-black px-2 py-0.5 shadow-neo-sm">
-              {selectedCount}/{MAX_SELECTION} selected
-            </span>
-          )}
+      {/* ── BACKGROUND LAYER 2: Paper Dot texture ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px)',
+          backgroundSize: '30px 30px',
+        }}
+      />
+
+      {/* ── Header ── */}
+      <header
+        className="sticky top-0 z-50 backdrop-blur-3xl px-8 py-6 flex items-center justify-between shadow-[0_10px_40px_rgba(0,0,0,0.8)]"
+        style={{
+          background: 'rgba(7, 7, 8, 0.45)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <div>
+          <h1 className="text-xl md:text-2xl font-light font-serif uppercase tracking-widest text-[#fdfbf7] flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+            {shop.name}
+          </h1>
+          <p className="text-[9px] font-mono text-white/40 tracking-[0.25em] uppercase mt-1">Showroom Catalogue</p>
         </div>
+        
+        <Link
+          href={`/shop/${shop.slug}/session`}
+          className="px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-[0.18em] border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+        >
+          Pair Session 📱
+        </Link>
       </header>
 
-      {/* Filter chips */}
-      <div className="px-4 py-4 flex gap-3 overflow-x-auto scrollbar-none border-b-4 border-tryonity-border bg-white shadow-[0_4px_0_0_rgba(0,0,0,1)] z-10 relative">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveFilter(cat)}
-            className={`flex-shrink-0 px-5 py-2 rounded-neo text-sm font-black uppercase tracking-wider border-4 border-black transition-all duration-150 shadow-neo-sm hover:-translate-y-0.5 hover:shadow-neo active:translate-y-0.5 active:shadow-none ${
-              activeFilter === cat
-                ? 'bg-tryonity-accent text-black'
-                : 'bg-white text-black hover:bg-[#f0f0f0]'
-            }`}
-          >
-            {FILTER_LABELS[cat] ?? cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Multi-select hint */}
-      {selectedCount === 0 && (
-        <div className="mx-4 mt-4 px-4 py-3 bg-[#ffde59] border-4 border-black shadow-neo-sm flex items-center gap-3">
-          <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p className="text-black font-black text-xs uppercase tracking-wider">
-            Tip: Tap + to select up to {MAX_SELECTION} items and try them all on at once!
-          </p>
+      <main className="max-w-7xl mx-auto px-8 py-10 space-y-10 relative z-10">
+        {/* Large Touch Category Ribbon */}
+        <div className="flex gap-3 overflow-x-auto scrollbar-none py-2">
+          {['ALL', ...categoryList].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCat(cat)}
+              className={`px-8 py-3.5 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase transition-all duration-300 flex-shrink-0 cursor-pointer ${
+                selectedCat === cat
+                  ? 'bg-white text-black shadow-[0_4px_20px_rgba(255,255,255,0.15)] scale-102 border border-transparent'
+                  : 'bg-white/3 border border-white/12 text-white/50 hover:border-white/30 hover:text-white'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
-      )}
 
-      {/* Product grid */}
-      <div className="px-4 py-6 pb-40">
+        {/* 3:4 Portrait Product Grid */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <p className="text-black font-black text-lg uppercase">No products</p>
+          <div className="text-center py-24 space-y-4 rounded-[2.5rem]" style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(24px)',
+          }}>
+            <p className="text-sm font-mono tracking-widest uppercase text-white/40">No Garments Available</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filtered.map((product) => {
-              const isSelected = selected.has(product._id);
-              const isDisabled = !isSelected && selectedCount >= MAX_SELECTION;
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filtered.map((prod) => {
+              const primaryImg = prod.images.find((i) => i.is_primary)?.url || prod.images[0]?.url || '';
+              const isSelected = selectedIds.includes(prod._id);
+
               return (
-                <div key={product._id}
-                  className={`card-hover bg-white flex flex-col h-full transition-all ${isSelected ? 'ring-4 ring-black ring-offset-2 shadow-neo' : ''}`}>
-                  <div className="relative border-b-4 border-black">
-                    <Link href={`/shop/${shop.slug}/product/${product._id}`} className="block">
-                      <div className="aspect-[3/4] bg-[#f0f0f0] overflow-hidden">
-                        {primaryImg(product) ? (
-                          <Image src={primaryImg(product)} alt={product.name} width={300} height={400}
-                            className={`w-full h-full object-cover transition-all ${isSelected ? 'grayscale-0' : 'grayscale-[10%]'}`} />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                    <button onClick={() => toggleSelect(product._id)} disabled={isDisabled}
-                      title={isDisabled ? `Max ${MAX_SELECTION} items` : isSelected ? 'Deselect' : 'Select for multi try-on'}
-                      className={`absolute top-2 left-2 w-8 h-8 border-4 border-black flex items-center justify-center transition-all shadow-neo-sm ${
-                        isSelected ? 'bg-tryonity-accent hover:bg-red-400' : isDisabled ? 'bg-gray-300 cursor-not-allowed opacity-50' : 'bg-white hover:bg-[#ffde59]'
-                      }`}>
-                      {isSelected ? (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
-                      ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
-                      )}
-                    </button>
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 bg-tryonity-accent border-4 border-black px-2 py-0.5 shadow-neo-sm">
-                        <p className="text-black text-xs font-black uppercase">✓ Selected</p>
-                      </div>
+                <div
+                  key={prod._id}
+                  className={`group relative rounded-[2.5rem] overflow-hidden transition-all duration-500 ${
+                    isSelected ? 'border-white shadow-[0_0_45px_rgba(255,255,255,0.15)] scale-[1.01]' : 'hover:scale-[1.01]'
+                  }`}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: isSelected ? '1px solid rgba(255,255,255,0.70)' : '1px solid rgba(255, 255, 255, 0.08)',
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)',
+                  }}
+                >
+                  {/* Select Toggle */}
+                  <button
+                    onClick={() => toggleSelect(prod._id)}
+                    className={`absolute top-5 right-5 z-20 w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-300 shadow-xl cursor-pointer ${
+                      isSelected
+                        ? 'bg-white border-white text-black shadow-[0_0_20px_rgba(255,255,255,0.4)] scale-105'
+                        : 'bg-black/60 border-white/20 text-white hover:border-white'
+                    }`}
+                  >
+                    {isSelected ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <span className="text-xs font-bold">+</span>
                     )}
-                  </div>
-                  <div className="p-3 flex flex-col flex-1">
-                    <p className="text-black font-black text-sm uppercase leading-tight line-clamp-2 flex-1">{product.name}</p>
-                    <p className="text-black font-extrabold text-base mt-2 bg-[#ffde59] border-2 border-black inline-block px-2 py-0.5 shadow-neo-sm self-start">{formatPrice(product.price)}</p>
-                    <Link href={`/shop/${shop.slug}/tryon?product=${product._id}`}
-                      className="mt-4 w-full flex items-center justify-center gap-1.5 bg-tryonity-accent hover:bg-[#e04848] text-black text-xs font-black uppercase py-3 border-2 border-black rounded-neo shadow-neo-sm hover:shadow-neo hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 10l4.553-2.069A1 1 0 0121 8.87V15.13a1 1 0 01-1.447.899L15 14M3 8h12v8H3z" /></svg>
-                      Try On
-                    </Link>
+                  </button>
+
+                  <Link href={`/shop/${shop.slug}/product/${prod._id}`}>
+                    <div className="relative aspect-[3/4] bg-black overflow-hidden rounded-[2.5rem]">
+                      {primaryImg ? (
+                        <Image
+                          src={primaryImg}
+                          alt={prod.name}
+                          fill
+                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-[#070708]">
+                          <svg className="w-12 h-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-transparent opacity-60" />
+                    </div>
+                  </Link>
+
+                  {/* Garment Meta */}
+                  <div className="p-7 space-y-3">
+                    <span className="text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-white/50 block">{prod.category}</span>
+                    <h3 className="text-lg font-serif uppercase text-white tracking-wide">{prod.name}</h3>
+                    <p className="text-xl font-mono text-white/40">{formatPrice(prod.price)}</p>
+
+                    <div className="pt-3">
+                      <Link
+                        href={`/shop/${shop.slug}/tryon?product=${prod._id}`}
+                        className="w-full text-[10px] font-bold uppercase tracking-[0.2em] py-4 rounded-full bg-white/90 text-black hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2"
+                      >
+                        Touch to try on →
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
         )}
-      </div>
+      </main>
 
-      {/* Multi-select floating action bar */}
-      {selectedCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-4 border-black shadow-[0_-4px_0_0_rgba(0,0,0,1)] p-4">
-          <div className="flex flex-col gap-3 max-w-sm mx-auto">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-black font-black text-base uppercase tracking-tight">
-                  {selectedCount}/{MAX_SELECTION} Selected
-                </p>
-              </div>
-              <button onClick={() => setSelected(new Set())}
-                className="px-3 py-1.5 bg-white border-2 border-black text-black text-xs font-black uppercase shadow-neo-sm hover:bg-red-100 transition-all">
-                Clear
-              </button>
-            </div>
-            <button onClick={handleTryAll}
-              className="w-full py-3.5 bg-tryonity-accent border-4 border-black text-black text-sm font-black uppercase shadow-neo hover:-translate-y-1 hover:shadow-neo-lg transition-all flex justify-center items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-              Try {selectedCount > 1 ? 'All' : 'It'} On →
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Floating upload button — only when nothing selected */}
-      {selectedCount === 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-6">
-          <Link href={`/shop/${shop.slug}/tryon`}
-            className="flex items-center justify-center gap-3 bg-white border-4 border-black text-black text-sm font-black uppercase tracking-widest px-6 py-4 rounded-neo shadow-neo-lg hover:bg-tryonity-accent hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all w-full">
-            <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            Upload Cloth Photo
+      {/* Floating Outfit Dock */}
+      {selectedIds.length > 0 && (
+        <div
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 rounded-full px-8 py-5 flex items-center gap-6 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] border animate-slide-up"
+          style={{
+            background: 'rgba(7, 7, 8, 0.90)',
+            borderColor: 'rgba(255, 255, 255, 0.15)',
+          }}
+        >
+          <span className="text-[10px] font-mono font-extrabold text-white/60 uppercase tracking-[0.2em]">
+            {selectedIds.length} {selectedIds.length === 1 ? 'Garment Selected' : 'Garments Selected'}
+          </span>
+          <Link
+            href={`/shop/${shop.slug}/tryon?products=${selectedIds.join(',')}`}
+            className="px-6 py-3.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.15)] flex-shrink-0"
+          >
+            Try On Outfit →
           </Link>
         </div>
       )}
-      </div>
     </div>
   );
 }

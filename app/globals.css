@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 @layer base {
   * {
     box-sizing: border-box;
@@ -11,96 +9,98 @@
     padding: 0;
   }
 
-  html,
-  body {
-    height: 100%;
-    background-color: theme('colors.tryonity.bg');
-    color: theme('colors.tryonity.text');
-    font-family: 'Inter', system-ui, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    background-color: #0f0d0e;
+    color: #fdfbf7;
+    font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: #0f0d0e;
+    color: #fdfbf7;
+    overflow-x: hidden;
   }
 
   ::selection {
-    background-color: theme('colors.tryonity.border');
-    color: theme('colors.tryonity.surface');
+    background-color: #e07a5f;
+    color: #0f0d0e;
   }
 
   ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
   }
-  ::-webkit-scrollbar-track { background: theme('colors.tryonity.bg'); }
-  ::-webkit-scrollbar-thumb { background: theme('colors.tryonity.border'); border-radius: 0; }
-  ::-webkit-scrollbar-thumb:hover { background: theme('colors.tryonity.muted'); }
+  ::-webkit-scrollbar-track { background: #0f0d0e; }
+  ::-webkit-scrollbar-thumb { background: rgba(224, 122, 95, 0.4); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #e07a5f; }
 }
 
 @layer components {
-  /* Buttons */
-  .btn-primary {
-    @apply w-full py-4 bg-tryonity-accent text-black font-extrabold rounded-neo border-4 border-tryonity-border
-           shadow-neo hover:shadow-neo-lg hover:-translate-y-1 active:translate-y-1 active:shadow-none
-           transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  /* Warm Terracotta Copper Buttons */
+  .btn-primary, .btn-luxury-gold, .btn-kiosk-cyan {
+    @apply w-full py-4 px-8 bg-gradient-to-r from-[#e07a5f] via-[#f4a261] to-[#d4a373] text-[#0f0d0e] font-sans font-bold text-xs tracking-[0.25em] uppercase rounded-full
+           shadow-[0_8px_25px_rgba(224,122,95,0.4)] hover:shadow-[0_12px_35px_rgba(224,122,95,0.6)] hover:scale-[1.02] active:scale-[0.98]
+           transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
   }
-  .btn-secondary {
-    @apply w-full py-4 bg-tryonity-surface text-black font-bold rounded-neo border-4 border-tryonity-border
-           shadow-neo hover:shadow-neo-lg hover:-translate-y-1 active:translate-y-1 active:shadow-none
-           transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  .btn-secondary, .btn-luxury-glass, .btn-kiosk-glass {
+    @apply w-full py-4 px-8 bg-[#181517] text-[#fdfbf7] font-sans font-bold text-xs tracking-[0.2em] uppercase rounded-full border border-[#e07a5f]/30
+           shadow-md hover:border-[#e07a5f] hover:bg-[#221e20] hover:scale-[1.02] active:scale-[0.98]
+           transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
   }
   .btn-ghost {
-    @apply px-4 py-2 text-tryonity-text hover:bg-tryonity-accent hover:text-black font-bold border-2 border-transparent hover:border-tryonity-border transition-all duration-150 rounded-neo hover:shadow-neo-sm;
+    @apply px-5 py-2.5 text-[#a8a29e] hover:text-[#e07a5f] font-sans font-semibold border border-transparent hover:border-[#e07a5f]/30 transition-all duration-300 rounded-full text-xs tracking-widest uppercase;
   }
   .btn-icon {
-    @apply w-10 h-10 flex items-center justify-center rounded-neo bg-tryonity-surface border-2 border-tryonity-border
-           text-tryonity-text hover:bg-tryonity-accent shadow-neo-sm hover:shadow-neo active:translate-y-0.5 active:shadow-none transition-all duration-150;
+    @apply w-11 h-11 flex items-center justify-center rounded-full bg-[#181517] border border-[#e07a5f]/30
+           text-[#fdfbf7] hover:border-[#e07a5f] hover:text-[#e07a5f] shadow-md hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer;
   }
 
-  /* Input */
+  /* Form Input */
   .input-field {
-    @apply w-full bg-tryonity-surface border-4 border-tryonity-border rounded-neo px-4 py-3.5
-           text-tryonity-text font-bold placeholder-tryonity-subtle outline-none
-           focus:shadow-neo focus:-translate-y-0.5 transition-all duration-150;
+    @apply w-full bg-[#181517] border border-[#e07a5f]/30 rounded-2xl px-5 py-4
+           text-[#fdfbf7] font-sans text-sm placeholder-[#a8a29e] outline-none
+           focus:border-[#e07a5f] focus:ring-1 focus:ring-[#e07a5f] transition-all duration-300;
   }
 
-  /* Cards */
-  .card {
-    @apply bg-tryonity-surface border-4 border-tryonity-border rounded-neo shadow-neo overflow-hidden;
+  /* Espresso Obsidian Luxury Cards */
+  .card, .card-luxury-glass, .card-kiosk, .glass-panel {
+    @apply bg-[#181517] border border-[#e07a5f]/25 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-500;
   }
   .card-hover {
-    @apply card hover:shadow-neo-lg hover:-translate-y-1 transition-all duration-150 cursor-pointer;
+    @apply card hover:border-[#e07a5f]/60 hover:shadow-[0_25px_60px_rgba(224,122,95,0.2)] hover:-translate-y-1.5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer;
   }
 
-  /* Labels */
+  /* Labels & Badges */
   .label {
-    @apply block text-tryonity-text text-sm font-bold uppercase tracking-widest mb-2 border-b-2 border-black inline-block pb-0.5;
+    @apply block text-[#e07a5f] text-xs font-sans font-bold uppercase tracking-[0.25em] mb-2 border-b border-[#e07a5f]/30 inline-block pb-1;
   }
   .badge {
-    @apply inline-flex items-center px-3 py-1 text-xs font-black uppercase tracking-wider border-2 border-tryonity-border shadow-neo-sm;
+    @apply inline-flex items-center px-4 py-1.5 text-[10px] font-sans font-bold uppercase tracking-[0.25em] rounded-full border border-[#e07a5f]/40 bg-[#e07a5f]/15 text-[#f4a261] shadow-sm;
   }
 
-  /* Section headings */
   .page-title {
-    @apply text-tryonity-text text-3xl font-black uppercase tracking-tight;
+    @apply text-[#fdfbf7] text-3xl md:text-5xl font-serif font-light uppercase tracking-[0.18em];
   }
   .section-title {
-    @apply text-tryonity-text text-xl font-extrabold uppercase;
+    @apply text-[#fdfbf7] text-xl md:text-2xl font-serif font-light uppercase tracking-[0.18em];
   }
 
-  /* Divider */
   .divider {
-    @apply border-t-4 border-tryonity-border;
+    @apply border-t border-[#e07a5f]/20;
   }
 
-  /* Status pills */
   .status-processing {
-    @apply badge bg-[#ffde59] text-black;
+    @apply badge bg-[#f4a261]/15 text-[#f4a261] border-[#f4a261]/40;
   }
   .status-done {
-    @apply badge bg-[#00cc00] text-black;
+    @apply badge bg-[#10b981]/15 text-[#10b981] border-[#10b981]/40;
   }
   .status-expired {
-    @apply badge bg-[#d1d5db] text-black;
+    @apply badge bg-white/10 text-[#a8a29e] border-white/20;
   }
 }
 
@@ -111,7 +111,18 @@
   }
   .scrollbar-none::-webkit-scrollbar { display: none; }
 
-  .text-gradient {
-    @apply bg-transparent text-tryonity-text;
+  .gold-gradient-text, .text-gradient, .copper-gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#f4a261] via-[#e07a5f] to-[#d4a373];
   }
 }
+
+/* Autofill overrides for dark mode luxury look */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0d0c0e inset !important;
+  -webkit-text-fill-color: #fdfbf7 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+

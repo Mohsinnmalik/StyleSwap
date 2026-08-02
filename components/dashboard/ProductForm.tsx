@@ -41,9 +41,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
     Math.max(0, (product?.images ?? []).findIndex((i) => i.is_primary))
   );
 
-  // Existing images (edit mode) to keep
   const [keepImages, setKeepImages]   = useState<ProductImage[]>(product?.images ?? []);
-  // New files to upload
   const [newFiles,   setNewFiles]     = useState<File[]>([]);
   const [newPreviews, setNewPreviews] = useState<string[]>([]);
 
@@ -61,14 +59,12 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
       valid.push(f);
     }
     if (valid.length === 0) return;
-    // Previews built synchronously so they stay index-aligned with newFiles
     setNewFiles((prev) => [...prev, ...valid]);
     setNewPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
   };
 
   const totalImages = keepImages.length + newFiles.length;
 
-  // primaryIdx is an absolute index over [keepImages, ...newFiles]
   const adjustPrimaryAfterRemove = (removedAbsIdx: number) => {
     setPrimaryIdx((p) => {
       if (removedAbsIdx === p) return 0;
@@ -149,53 +145,53 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="card-luxury-glass p-8 space-y-6 text-[#fbfbfa]">
       {/* Name */}
-      <div>
-        <label className="label">Product Name *</label>
-        <input className="input-field" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Classic White Kurta" />
+      <div className="space-y-2">
+        <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">Garment Name *</label>
+        <input className="input-field" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Silk Tuxedo Blazer" />
       </div>
 
       {/* Category + Price */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="label">Category *</label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">Category *</label>
           <select
-            className="input-field appearance-none"
+            className="input-field bg-[#08080a]"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option value="">Select…</option>
+            <option value="">Select Category…</option>
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label className="label">Price (₹) *</label>
+        <div className="space-y-2">
+          <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">Retail Price (₹) *</label>
           <input className="input-field" type="number" min="0" step="1" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1499" />
         </div>
       </div>
 
       {/* Description */}
-      <div>
-        <label className="label">Description</label>
-        <textarea className="input-field resize-none" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Short description…" />
+      <div className="space-y-2">
+        <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">Craftsmanship & Fabric Description</label>
+        <textarea className="input-field resize-none" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="High-thread count mulberry silk with gold thread embroidery..." />
       </div>
 
       {/* Sizes */}
-      <div>
-        <label className="label">Available Sizes</label>
+      <div className="space-y-3">
+        <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">Bespoke Size Availability</label>
         <div className="flex flex-wrap gap-2">
           {SIZE_OPTIONS.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => toggleSize(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              className={`w-12 h-12 rounded-full font-mono text-xs font-bold border transition-all ${
                 sizes.includes(s)
-                  ? 'bg-tryonity-accent/20 border-tryonity-accent text-tryonity-accent'
-                  : 'bg-tryonity-surface border-tryonity-border text-tryonity-muted hover:border-tryonity-border2'
+                  ? 'bg-[#d4af37] border-[#d4af37] text-[#08080a] shadow-luxury-gold'
+                  : 'bg-[#08080a] border-[#d4af37]/30 text-[#8e8e93] hover:border-[#d4af37]'
               }`}
             >
               {s}
@@ -205,24 +201,24 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
       </div>
 
       {/* Colors */}
-      <div>
-        <label className="label">Colors</label>
-        <div className="flex gap-2">
+      <div className="space-y-3">
+        <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">Color Variants</label>
+        <div className="flex gap-3">
           <input
             className="input-field flex-1"
             value={colorInput}
             onChange={(e) => setColorInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addColor(); } }}
-            placeholder="e.g. Navy Blue"
+            placeholder="e.g. Midnight Black, Champagne Gold"
           />
-          <button type="button" onClick={addColor} className="btn-secondary !w-auto px-4">Add</button>
+          <button type="button" onClick={addColor} className="btn-luxury-glass text-xs !py-3 !px-6">ADD COLOR</button>
         </div>
         {colors.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 pt-1">
             {colors.map((c) => (
-              <span key={c} className="badge bg-tryonity-surface2 text-tryonity-muted border border-tryonity-border gap-1">
+              <span key={c} className="px-3 py-1 rounded-full bg-[#08080a] border border-[#d4af37]/30 text-xs text-[#f3e5ab] font-sans tracking-wide inline-flex items-center gap-2">
                 {c}
-                <button type="button" onClick={() => setColors((prev) => prev.filter((x) => x !== c))} className="ml-1 hover:text-white">×</button>
+                <button type="button" onClick={() => setColors((prev) => prev.filter((x) => x !== c))} className="text-[#8e8e93] hover:text-[#ff5757]">×</button>
               </span>
             ))}
           </div>
@@ -230,30 +226,29 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
       </div>
 
       {/* Images */}
-      <div>
-        <label className="label">Product Images (up to 5)</label>
+      <div className="space-y-3">
+        <label className="text-xs font-sans tracking-[0.2em] uppercase text-[#8e8e93] block">High-Res Garment Imagery (Up to 5)</label>
 
-        {/* Image previews */}
         {totalImages > 0 && (
-          <div className="flex flex-wrap gap-3 mb-3">
+          <div className="flex flex-wrap gap-4 mb-3">
             {keepImages.map((img, idx) => (
-              <div key={img.public_id} className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-colors ${primaryIdx === idx ? 'border-tryonity-accent' : 'border-tryonity-border'}`} onClick={() => setPrimaryIdx(idx)}>
+              <div key={img.public_id} className={`relative w-24 h-28 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all ${primaryIdx === idx ? 'border-[#d4af37] shadow-luxury-glow' : 'border-[#d4af37]/20'}`} onClick={() => setPrimaryIdx(idx)}>
                 <Image src={img.url} alt="" fill className="object-cover" />
                 {primaryIdx === idx && (
-                  <div className="absolute top-1 left-1 bg-tryonity-accent rounded-full w-4 h-4 flex items-center justify-center">
-                    <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  <div className="absolute top-1.5 left-1.5 bg-[#d4af37] text-[#08080a] rounded-full w-5 h-5 flex items-center justify-center font-bold text-[10px]">
+                    ★
                   </div>
                 )}
-                <button type="button" onClick={(e) => { e.stopPropagation(); removeKeepImage(idx); }} className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center text-white text-xs hover:bg-red-600">×</button>
+                <button type="button" onClick={(e) => { e.stopPropagation(); removeKeepImage(idx); }} className="absolute top-1.5 right-1.5 w-5 h-5 bg-black/80 text-white rounded-full flex items-center justify-center text-xs hover:bg-[#ff5757]">×</button>
               </div>
             ))}
             {newPreviews.map((src, idx) => {
               const absIdx = keepImages.length + idx;
               return (
-                <div key={src} className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-colors ${primaryIdx === absIdx ? 'border-tryonity-accent' : 'border-tryonity-border'}`} onClick={() => setPrimaryIdx(absIdx)}>
+                <div key={src} className={`relative w-24 h-28 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all ${primaryIdx === absIdx ? 'border-[#d4af37] shadow-luxury-glow' : 'border-[#d4af37]/20'}`} onClick={() => setPrimaryIdx(absIdx)}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={src} alt="" className="w-full h-full object-cover" />
-                  <button type="button" onClick={(e) => { e.stopPropagation(); removeNewFile(idx); }} className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center text-white text-xs hover:bg-red-600">×</button>
+                  <button type="button" onClick={(e) => { e.stopPropagation(); removeNewFile(idx); }} className="absolute top-1.5 right-1.5 w-5 h-5 bg-black/80 text-white rounded-full flex items-center justify-center text-xs hover:bg-[#ff5757]">×</button>
                 </div>
               );
             })}
@@ -264,35 +259,35 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full border-2 border-dashed border-tryonity-border rounded-2xl py-6 flex flex-col items-center gap-2 hover:border-tryonity-accent/50 hover:bg-tryonity-surface2/50 transition-colors"
+            className="w-full border border-dashed border-[#d4af37]/40 bg-[#08080a]/60 rounded-3xl py-8 flex flex-col items-center gap-2 hover:border-[#d4af37] transition-all group"
           >
-            <svg className="w-7 h-7 text-tryonity-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <p className="text-tryonity-muted text-sm">Click to upload images</p>
-            <p className="text-tryonity-subtle text-xs">JPG, PNG, WebP · Max 5MB each · {5 - totalImages} remaining</p>
+            <div className="w-10 h-10 rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10 flex items-center justify-center text-[#d4af37] group-hover:scale-110 transition-transform">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <p className="text-xs font-sans tracking-[0.2em] uppercase text-[#d4af37]">UPLOAD GARMENT PHOTOGRAPHY</p>
+            <p className="text-[11px] text-[#8e8e93] font-light">JPG, PNG, WebP · Max 5MB each · {5 - totalImages} slots remaining</p>
           </button>
         )}
         <input ref={fileInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => handleFiles(e.target.files)} />
-        {totalImages > 0 && <p className="text-tryonity-subtle text-xs mt-2">Click an image to set as primary (star icon)</p>}
+        {totalImages > 0 && <p className="text-[11px] text-[#8e8e93] font-light italic">Tap any image to mark as primary showcase thumbnail (marked with ★).</p>}
       </div>
 
-      {/* Error */}
       {error && (
-        <div className="text-red-400 text-sm bg-red-950/30 border border-red-900/40 rounded-xl px-4 py-3">
+        <div className="p-4 rounded-2xl bg-[#ff5757]/10 border border-[#ff5757]/30 text-[#ff5757] text-xs font-sans tracking-wide">
           {error}
         </div>
       )}
 
-      {/* Submit */}
-      <div className="flex gap-3 pt-2">
-        <button type="button" onClick={() => router.back()} className="btn-secondary !w-auto flex-1">Cancel</button>
-        <button type="submit" disabled={submitting} className="btn-primary flex-1">
-          {submitting ? (
-            <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Saving…</>
-          ) : mode === 'create' ? 'Add Product' : 'Save Changes'}
+      {/* Submit Controls */}
+      <div className="flex items-center gap-4 pt-4 border-t border-[#d4af37]/20">
+        <button type="button" onClick={() => router.back()} className="btn-luxury-glass text-xs !py-4 flex-1">CANCEL</button>
+        <button type="submit" disabled={submitting} className="btn-luxury-gold text-xs !py-4 flex-1">
+          {submitting ? 'SAVING GARMENT…' : mode === 'create' ? 'PUBLISH COUTURE PIECE' : 'SAVE ATELIER CHANGES'}
         </button>
       </div>
     </form>
   );
 }
+

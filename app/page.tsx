@@ -1,119 +1,108 @@
+'use client';
+
 import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-tryonity-bg font-sans selection:bg-tryonity-accent selection:text-black">
-      {/* Navigation */}
-      <nav className="border-b-4 border-black bg-white px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-neo-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-tryonity-accent border-4 border-black rounded-neo flex items-center justify-center shadow-neo-sm">
-            <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          <span className="text-black font-black text-2xl uppercase tracking-tighter">Tryonity</span>
+    <div className="relative bg-black font-sans selection:bg-white/30 text-white">
+      
+      {/* Sleek Fixed Navbar */}
+      <nav className="fixed top-0 w-full px-6 py-6 flex justify-between items-center z-50 mix-blend-difference text-white">
+        <div className="text-xl font-serif tracking-[0.3em] uppercase font-bold">
+          Tryonity<span className="opacity-50">.</span>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-black font-black uppercase tracking-wider text-sm hover:underline decoration-4 underline-offset-4 hidden sm:block">
-            Login
-          </Link>
-          <Link href="/signup" className="bg-tryonity-accent border-4 border-black text-black px-6 py-2 rounded-neo font-black uppercase tracking-widest text-sm shadow-neo-sm hover:-translate-y-1 hover:shadow-neo active:translate-y-1 active:shadow-none transition-all">
-            Get Started
-          </Link>
+        <div className="flex items-center gap-6 text-[10px] font-bold tracking-[0.2em] uppercase">
+          <Link href="/login" className="hover:opacity-70 transition-opacity">Client Login</Link>
+          <Link href="/signup" className="hover:opacity-70 transition-opacity">Request Access</Link>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="px-6 py-20 md:py-32 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
-        <div className="flex-1 space-y-8 relative z-10">
-          <div className="inline-block bg-[#ffde59] border-4 border-black px-4 py-2 shadow-neo-sm transform -rotate-2">
-            <p className="text-black font-black uppercase tracking-widest text-sm">Empower your showroom</p>
-          </div>
-          <h1 className="text-6xl md:text-8xl font-black text-black uppercase tracking-tighter leading-[0.9] drop-shadow-[4px_4px_0px_#fff]">
-            The Future of <br className="hidden md:block" /> Virtual Try-On
+      {/* Slide 1: Hero */}
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black z-0">
+        <div 
+          className="absolute inset-0 opacity-80"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2564&auto=format&fit=crop')",
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        
+        <div className="relative z-10 text-center px-4 flex flex-col items-center">
+          <h1 className="font-serif text-5xl md:text-8xl tracking-widest uppercase text-white font-light drop-shadow-2xl">
+            Redefine <br/><span className="italic font-serif">Reality</span>
           </h1>
-          <p className="text-xl md:text-2xl font-bold text-black max-w-xl border-l-8 border-tryonity-accent pl-6 py-2 bg-white/50">
-            Let your customers try on clothes instantly using AI. Zero fitting rooms. Zero hassle. Manage your inventory efficiently.
+          <div className="mt-16 flex flex-col items-center gap-4">
+            <p className="text-[9px] md:text-xs font-mono tracking-[0.4em] uppercase text-white/80">
+              Scroll to explore
+            </p>
+            <div className="w-[1px] h-12 bg-white/50 animate-pulse" />
+          </div>
+        </div>
+      </section>
+
+      {/* Slide 2: The Tech */}
+      <section className="relative min-h-screen w-full flex items-center justify-center p-6 bg-black z-10">
+        <div 
+          className="absolute inset-0 opacity-60"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?q=80&w=2564&auto=format&fit=crop')",
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+        
+        <div className="relative z-10 p-10 md:p-20 rounded-[2.5rem] bg-black/20 backdrop-blur-2xl border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.8)] max-w-2xl text-center">
+          <h2 className="font-serif text-3xl md:text-5xl uppercase tracking-[0.2em] mb-8 drop-shadow-md">
+            Neural Precision
+          </h2>
+          <p className="font-sans text-xs md:text-sm leading-loose tracking-[0.2em] uppercase text-white/70 max-w-md mx-auto">
+            The world's most advanced digital fitting engine. By utilizing bleeding-edge vertex mapping and physical simulations, we create an exact digital reflection of haute couture. 
+            <br/><br/>
+            Zero estimates. Absolute perfection.
+          </p>
+        </div>
+      </section>
+
+      {/* Slide 3: The Atelier & CTA */}
+      <section className="relative min-h-screen w-full flex items-center justify-center p-6 bg-black z-20">
+        <div 
+          className="absolute inset-0 opacity-80"
+          style={{
+            backgroundImage: "url('/luxury_kiosk.jpg')",
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black" />
+        
+        <div className="relative z-10 p-12 md:p-24 rounded-[3rem] bg-black/20 backdrop-blur-md border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.9)] max-w-xl text-center w-full">
+          <h2 className="font-serif text-4xl md:text-6xl uppercase tracking-[0.1em] mb-4">
+            Enter
+          </h2>
+          <p className="font-mono text-[9px] tracking-[0.4em] uppercase text-white/50 mb-16">
+            The Virtual Showroom
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 pt-4 relative z-20">
-            <Link href="/signup" className="block w-full sm:w-auto bg-[#00cc00] border-4 border-black text-black px-8 py-5 rounded-neo font-black uppercase tracking-widest text-lg shadow-neo-lg hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all text-center">
-              Signup Now
+          <div className="flex flex-col gap-5 w-full">
+            <Link href="/login" className="w-full py-5 bg-white/90 text-black text-[10px] font-bold tracking-[0.2em] uppercase text-center hover:bg-white transition-colors rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+              Client Login
             </Link>
-            <Link href="/login" className="block w-full sm:w-auto bg-[#ffde59] border-4 border-black text-black px-8 py-5 rounded-neo font-black uppercase tracking-widest text-lg shadow-neo-lg hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all text-center">
-              Owner Login
+            <Link href="/signup" className="w-full py-5 border border-white/30 text-white text-[10px] font-bold tracking-[0.2em] uppercase text-center hover:bg-white/10 hover:border-white transition-colors rounded-full">
+              Request Access
             </Link>
-            <Link href="/shop/tryonity-demo" className="flex w-full sm:w-auto items-center justify-center gap-3 bg-white border-4 border-black text-black px-8 py-5 rounded-neo font-black uppercase tracking-widest text-lg shadow-neo-lg hover:-translate-y-1 hover:shadow-[10px_10px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all text-center">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              Explore
-            </Link>
-          </div>
-        </div>
-        
-        <div className="flex-1 relative w-full aspect-square max-w-md">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 bg-[#ff00ff] border-4 border-black rounded-neo shadow-neo translate-x-4 translate-y-4"></div>
-          <div className="absolute inset-0 bg-[#00ffff] border-4 border-black rounded-neo shadow-neo translate-x-2 translate-y-2"></div>
-          <div className="absolute inset-0 bg-white border-4 border-black rounded-neo shadow-neo flex flex-col items-center justify-center p-8 text-center space-y-6">
-            <svg className="w-32 h-32 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <p className="font-black text-2xl uppercase tracking-wider">AI Try-On <br/> Coming to life</p>
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
-      <section className="border-t-4 border-black bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <h2 className="text-4xl md:text-6xl font-black text-black uppercase tracking-tighter mb-16 text-center">
-            Built for <span className="text-tryonity-accent bg-black px-4 py-1 inline-block transform -rotate-1">Impact</span>
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[#ffde59] border-4 border-black p-8 rounded-neo shadow-neo-lg hover:-translate-y-2 transition-transform">
-              <div className="w-16 h-16 bg-white border-4 border-black rounded-neo flex items-center justify-center shadow-neo-sm mb-6">
-                <span className="text-3xl">⚡</span>
-              </div>
-              <h3 className="text-2xl font-black uppercase mb-4">Instant Generation</h3>
-              <p className="text-black font-bold text-lg">Upload a selfie, pick an outfit, and see results instantly. Our AI models handle the heavy lifting perfectly.</p>
-            </div>
-            
-            <div className="bg-[#00ffff] border-4 border-black p-8 rounded-neo shadow-neo-lg hover:-translate-y-2 transition-transform">
-              <div className="w-16 h-16 bg-white border-4 border-black rounded-neo flex items-center justify-center shadow-neo-sm mb-6">
-                <span className="text-3xl">📱</span>
-              </div>
-              <h3 className="text-2xl font-black uppercase mb-4">Scan & Shop</h3>
-              <p className="text-black font-bold text-lg">Customers simply scan a QR code at your physical store to enter the virtual changing room on their own device.</p>
-            </div>
-            
-            <div className="bg-[#ff00ff] border-4 border-black p-8 rounded-neo shadow-neo-lg hover:-translate-y-2 transition-transform">
-              <div className="w-16 h-16 bg-white border-4 border-black rounded-neo flex items-center justify-center shadow-neo-sm mb-6">
-                <span className="text-3xl">📊</span>
-              </div>
-              <h3 className="text-2xl font-black uppercase mb-4 text-white drop-shadow-[2px_2px_0px_#000]">Easy Inventory</h3>
-              <p className="text-white font-bold text-lg drop-shadow-[1px_1px_0px_#000]">Manage all your products, variations, and active try-on sessions from a centralized dashboard.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      
       {/* Footer */}
-      <footer className="border-t-4 border-black bg-black text-white px-6 py-12">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-tryonity-accent rounded-neo flex items-center justify-center">
-              <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <span className="font-black text-xl uppercase tracking-tighter">Tryonity</span>
-          </div>
-          <p className="font-bold text-sm text-gray-400">© 2026 Tryonity Inc. All rights reserved.</p>
-        </div>
+      <footer className="relative bg-black w-full py-12 text-center text-[9px] font-mono tracking-[0.4em] text-white/30 uppercase z-30">
+        &copy; 2026 Tryonity Global
       </footer>
     </div>
   );

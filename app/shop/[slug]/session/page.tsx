@@ -30,14 +30,13 @@ function SessionPageContent() {
     try {
       const res = await fetch(`/api/tryon/session?code=${encodeURIComponent(code)}`);
       const json: SessionData = await res.json();
-      // Skip transient rate-limit responses; keep last known state
       if (json.status === 'rate_limited') return;
       setData(json);
       if (json.expires_at) {
         setTimeLeft(new Date(json.expires_at).getTime() - Date.now());
       }
     } catch {
-      // ignore transient network errors; next poll retries
+      // ignore transient network errors
     }
   }, [code]);
 
@@ -45,13 +44,12 @@ function SessionPageContent() {
 
   useEffect(() => {
     if (!code) { setError('No session code provided.'); return; }
-    if (status && TERMINAL_STATUSES.includes(status)) return; // stop polling once terminal
+    if (status && TERMINAL_STATUSES.includes(status)) return;
     poll();
     const interval = setInterval(poll, 3000);
     return () => clearInterval(interval);
   }, [code, poll, status]);
 
-  // Countdown tick
   useEffect(() => {
     if (!data?.expires_at) return;
     const tick = setInterval(() => {
@@ -68,8 +66,8 @@ function SessionPageContent() {
 
   if (error || terminalMessage) {
     return (
-      <div className="min-h-screen bg-tryonity-bg flex flex-col items-center justify-center px-6 gap-4">
-        <p className="text-red-400 text-center font-bold">{error || terminalMessage}</p>
+      <div className="min-h-screen bg-[#070708] flex flex-col items-center justify-center px-6 gap-4">
+        <p className="text-red-500 text-center font-light text-sm uppercase tracking-widest">{error || terminalMessage}</p>
       </div>
     );
   }
@@ -77,93 +75,85 @@ function SessionPageContent() {
   const isDone = data?.status === 'done';
 
   return (
-    <div className="min-h-screen bg-tryonity-bg flex flex-col items-center justify-center px-6 py-12">
-      {/* Status badge */}
-      <div className={`w-20 h-20 rounded-full border flex items-center justify-center mb-8 transition-colors ${
+    <div className="min-h-screen bg-[#070708] text-[#fdfbf7] flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden select-none">
+      {/* Background Radial Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.06),_transparent_70%)] pointer-events-none blur-3xl" />
+
+      {/* Status Emblem */}
+      <div className={`w-20 h-20 rounded-full border flex items-center justify-center mb-8 shadow-2xl transition-all ${
         isDone
-          ? 'bg-green-950/20 border-green-800/30'
-          : 'bg-tryonity-accent/10 border-tryonity-accent/20'
+          ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-500'
+          : 'bg-white/10 border-white/40 text-white'
       }`}>
         {isDone ? (
-          <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         ) : (
-          <div className="w-10 h-10 border-4 border-tryonity-accent/20 border-t-tryonity-accent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
         )}
       </div>
 
-      {/* Status text */}
-      <p className="text-tryonity-muted text-xs uppercase tracking-widest mb-4">
-        {isDone ? 'Result Ready!' : 'Processing...'}
-      </p>
+      <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/50 mb-3">
+        {isDone ? 'NEURAL COMPOSITE READY' : 'SYNTHESIZING COUTURE RENDER...'}
+      </span>
 
-      {/* Code box — black bg with yellow text for maximum visibility */}
-      <p className="text-tryonity-muted text-xs uppercase tracking-widest mb-2">Your Code</p>
-      <div className="bg-black border-4 border-tryonity-border rounded-3xl px-10 py-8 mb-3 w-full max-w-sm text-center shadow-lg">
-        <p className="text-[#ffde59] font-extrabold tracking-[0.35em] text-5xl tabular-nums select-all">{formattedCode}</p>
+      {/* Dark Glass Vault Card */}
+      <div
+        className="w-full max-w-md rounded-[2.5rem] p-8 mb-6 text-center backdrop-blur-xl shadow-2xl space-y-4"
+        style={{
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/40 block">BOUTIQUE ACCESS CODE</span>
+        
+        <div className="py-4 px-6 rounded-2xl bg-[#0d0c0e] border border-white/10 shadow-inner">
+          <p className="font-mono tracking-[0.4em] text-4xl sm:text-5xl font-bold text-white select-all">
+            {formattedCode}
+          </p>
+        </div>
+
+        <p className="text-xs text-white/40 leading-relaxed">
+          Enter this 6-digit access code on the showroom terminal screen to reveal your haute couture lookbook.
+        </p>
       </div>
 
-      {/* Kiosk link */}
-      <a href={KIOSK_URL} target="_blank" rel="noreferrer"
-        className="flex items-center gap-2 mb-6 px-5 py-3 bg-tryonity-surface border border-tryonity-border rounded-2xl hover:border-tryonity-accent transition-all group">
-        <svg className="w-4 h-4 text-tryonity-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-        </svg>
-        <span className="text-tryonity-muted text-sm group-hover:text-tryonity-accent transition-colors">Open Kiosk Screen →</span>
-      </a>
-
-      {/* Instruction */}
-      <p className="text-tryonity-muted text-center text-base mb-8 leading-relaxed max-w-xs">
-        Enter this code on the{' '}
-        <a href={KIOSK_URL} target="_blank" rel="noreferrer" className="text-tryonity-accent font-semibold underline underline-offset-2">kiosk screen</a>{' '}
-        in the showroom to see your look
-      </p>
-
-      {/* Timer */}
+      {/* Active Countdown Timer Pill */}
       {timeLeft > 0 && (
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border mb-6 transition-colors ${
-          timeLeft > 120000 ? 'bg-tryonity-surface border-tryonity-border text-tryonity-muted'
-            : 'bg-amber-950/30 border-amber-800/50 text-amber-400'
-        }`}>
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md text-white/80 text-[10px] font-mono tracking-widest mb-8">
+          <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span className="text-xs font-medium tabular-nums">Session expires in {formatCountdown(timeLeft)}</span>
+          SESSION EXPIRES IN {formatCountdown(timeLeft)}
         </div>
       )}
+
+      {/* Direct Kiosk Launcher Link */}
+      <a
+        href={KIOSK_URL}
+        target="_blank"
+        rel="noreferrer"
+        className="px-8 py-4.5 rounded-full text-xs font-bold uppercase tracking-[0.2em] border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+      >
+        Open Showroom Terminal Screen →
+      </a>
 
       {/* Uploaded image thumbnails */}
       {(data?.person_image_url || data?.cloth_image_url) && (
-        <div className="flex gap-4 mt-2">
+        <div className="flex gap-4 mt-8">
           {data?.person_image_url && (
-            <div className="w-16 h-20 rounded-xl overflow-hidden bg-tryonity-surface border border-tryonity-border">
+            <div className="w-16 h-20 rounded-2xl overflow-hidden border border-white/12 shadow-md">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={data.person_image_url} alt="Your photo" className="w-full h-full object-cover" />
+              <img src={data.person_image_url} alt="Your portrait" className="w-full h-full object-cover" />
             </div>
           )}
           {data?.cloth_image_url && (
-            <div className="w-16 h-20 rounded-xl overflow-hidden bg-tryonity-surface border border-tryonity-border">
+            <div className="w-16 h-20 rounded-2xl overflow-hidden border border-white/12 shadow-md">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={data.cloth_image_url} alt="Cloth" className="w-full h-full object-cover" />
+              <img src={data.cloth_image_url} alt="Garment reference" className="w-full h-full object-cover" />
             </div>
           )}
-        </div>
-      )}
-
-      {/* Processing note */}
-      {!isDone && (
-        <div className="mt-8 px-4 py-3 bg-tryonity-accent/5 border border-tryonity-accent/20 rounded-2xl max-w-sm w-full">
-          <div className="flex items-start gap-3">
-            <div className="w-4 h-4 mt-0.5 flex-shrink-0">
-              <div className="w-4 h-4 border-2 border-tryonity-accent border-t-transparent rounded-full animate-spin" />
-            </div>
-            <p className="text-tryonity-accent/80 text-xs leading-relaxed">
-              Your try-on is being generated. Head to the{' '}
-              <a href={KIOSK_URL} target="_blank" rel="noreferrer" className="underline">kiosk screen</a>{' '}
-              — your result will appear automatically.
-            </p>
-          </div>
         </div>
       )}
     </div>
@@ -173,11 +163,8 @@ function SessionPageContent() {
 export default function SessionPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-tryonity-bg flex flex-col items-center justify-center gap-6 px-4">
-        <div className="relative w-20 h-20">
-          <div className="absolute inset-0 border-4 border-tryonity-accent/20 rounded-full" />
-          <div className="absolute inset-0 border-4 border-tryonity-accent border-t-transparent rounded-full animate-spin" />
-        </div>
+      <div className="min-h-screen bg-[#070708] flex flex-col items-center justify-center gap-6 px-4">
+        <div className="w-16 h-16 rounded-full border-2 border-white border-t-transparent animate-spin" />
       </div>
     }>
       <SessionPageContent />

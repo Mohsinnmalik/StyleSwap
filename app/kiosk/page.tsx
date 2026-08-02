@@ -7,9 +7,11 @@ import { formatCountdown } from '@/lib/utils';
 type KioskState = 'idle' | 'processing' | 'result' | 'error';
 
 interface SessionData {
-  status:     string;
-  image_url?: string;
-  expires_at?: string;
+  status:           string;
+  image_url?:       string;
+  expires_at?:      string;
+  person_image_url?: string;
+  cloth_image_url?:  string;
 }
 
 // ─── Idle State ───────────────────────────────────────────────────────────────
@@ -17,8 +19,6 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
   const [code, setCode] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // URLs derive from the current deployment; the shop for the QR code comes
-  // from ?shop=<slug> (e.g. /kiosk?shop=my-shop), falling back to the homepage.
   const [tryonUrl, setTryonUrl] = useState('');
   const [kioskUrl, setKioskUrl] = useState('');
   const [qrSrc,    setQrSrc]    = useState('');
@@ -29,7 +29,7 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
     const target = slug ? `${origin}/shop/${slug}/tryon` : origin;
     setTryonUrl(target);
     setKioskUrl(`${origin}/kiosk`);
-    QRCode.toDataURL(target, { width: 400, margin: 1 })
+    QRCode.toDataURL(target, { width: 400, margin: 1, color: { dark: '#000000', light: '#ffffff' } })
       .then(setQrSrc)
       .catch(() => setQrSrc(''));
   }, []);
@@ -41,84 +41,87 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-8 px-10">
-      <div className="text-center">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="w-4 h-4 bg-tryonity-accent rounded-full animate-pulse" />
-          <span className="text-tryonity-accent text-sm font-bold uppercase tracking-[0.35em]">Tryonity</span>
-          <div className="w-4 h-4 bg-tryonity-accent rounded-full animate-pulse" />
+    <div className="flex flex-col items-center justify-center h-full gap-10 px-12 relative overflow-hidden bg-[#070708] text-white">
+      {/* Background Radial Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.06),_transparent_70%)] pointer-events-none blur-3xl" />
+
+      {/* Brand Header */}
+      <div className="text-center space-y-4 z-10">
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+          <span className="text-white text-[9px] font-mono font-light uppercase tracking-[0.3em]">TRYONITY HAUTE COUTURE</span>
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
         </div>
-        <h1 className="text-white text-7xl font-extrabold tracking-tight leading-none mb-4">Virtual Try-On</h1>
-        <p className="text-tryonity-muted text-2xl">AI-powered fashion preview</p>
+        <h1 className="text-6xl lg:text-7xl font-serif font-light tracking-[0.15em] uppercase text-white">
+          Neural Virtual <span className="italic font-serif">Fitting</span>
+        </h1>
+        <p className="text-white/40 text-lg font-light tracking-widest uppercase">Showroom Display Terminal</p>
       </div>
 
-      <div className="flex items-start gap-16">
-        {/* QR Code panel */}
+      <div className="flex items-center gap-16 z-10">
+        {/* QR Code Panel */}
         <div className="flex flex-col items-center gap-4">
-          <div className="bg-white p-4 rounded-2xl shadow-2xl border-4 border-white w-[212px] h-[212px] flex items-center justify-center">
+          <div className="bg-white p-5 rounded-[2.5rem] shadow-2xl border border-white/15 w-[220px] h-[220px] flex items-center justify-center">
             {qrSrc ? (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={qrSrc} alt="Try-On QR Code" width={180} height={180} />
+              <img src={qrSrc} alt="Try-On QR Code" width={190} height={190} className="w-full h-full object-contain rounded-2xl" />
             ) : (
-              <div className="w-[180px] h-[180px] bg-gray-200 animate-pulse rounded" />
+              <div className="w-[190px] h-[190px] bg-gray-100 animate-pulse rounded-2xl" />
             )}
           </div>
-          <div className="text-center">
-            <p className="text-tryonity-accent text-sm font-bold uppercase tracking-widest mb-1">📱 Scan to Try On</p>
-            <p className="text-tryonity-muted text-xs max-w-[200px] text-center leading-relaxed">{tryonUrl}</p>
+          <div className="text-center space-y-1">
+            <p className="text-white/80 text-xs font-mono font-medium tracking-[0.2em] uppercase">📱 SCAN TO STYLE ON MOBILE</p>
+            <p className="text-white/35 text-[11px] font-mono max-w-[220px] truncate">{tryonUrl}</p>
           </div>
         </div>
 
-        <div className="w-px self-stretch bg-gradient-to-b from-transparent via-tryonity-accent to-transparent" />
+        {/* Vertical Divider */}
+        <div className="w-px h-64 bg-gradient-to-b from-transparent via-white/15 to-transparent" />
 
-        {/* Code input panel */}
-        <div className="flex flex-col gap-5 w-80">
-          <p className="text-tryonity-muted text-xl text-center">Or enter your code</p>
+        {/* Code Input Panel */}
+        <div className="flex flex-col gap-6 w-96">
+          <p className="text-white/50 text-xs font-mono tracking-[0.2em] uppercase text-center">OR ENTER YOUR 6-DIGIT CODE</p>
 
-          <div className="relative z-10">
-          <input
-            ref={inputRef}
-            id="kiosk-code-input"
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={6}
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-            onKeyDown={(e) => e.key === 'Enter' && submit()}
-            placeholder="_ _ _ _ _ _"
-            className="w-full relative z-20 bg-black border-4 border-tryonity-border rounded-3xl
-                       text-[#ffde59] text-5xl font-extrabold text-center tracking-[0.5em] tabular-nums
-                       py-8 px-6 outline-none placeholder-gray-600 shadow-lg
-                       focus:border-tryonity-accent transition-all duration-200 cursor-text pointer-events-auto"
-            autoComplete="off"
-          />
-          {code.length > 0 && code.length < 6 && (
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none z-30">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < code.length ? 'bg-tryonity-accent' : 'bg-gray-600'}`} />
-              ))}
-            </div>
-          )}
-        </div>
+          <div className="relative">
+            <input
+              ref={inputRef}
+              id="kiosk-code-input"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              onKeyDown={(e) => e.key === 'Enter' && submit()}
+              placeholder="_ _ _ _ _ _"
+              className="w-full bg-[#0d0c0e] border border-white/12 rounded-[2rem]
+                         text-white text-5xl font-mono font-bold text-center tracking-[0.4em] tabular-nums
+                         py-7 px-6 outline-none placeholder-white/20 shadow-2xl backdrop-blur-xl
+                         focus:border-white focus:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300"
+              autoComplete="off"
+            />
+            {code.length > 0 && code.length < 6 && (
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < code.length ? 'bg-white' : 'bg-white/25'}`} />
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             id="kiosk-view-result-btn"
             type="button"
             onClick={submit}
             disabled={code.length !== 6}
-            className={`w-full py-6 rounded-3xl text-2xl font-bold transition-all duration-200 ${
+            className={`w-full py-5 rounded-full text-sm font-bold tracking-[0.2em] uppercase transition-all duration-300 ${
               code.length === 6
-                ? 'bg-tryonity-accent hover:bg-tryonity-accent-hover text-white shadow-2xl shadow-blue-600/30 hover:scale-[1.01]'
-                : 'bg-tryonity-surface text-tryonity-subtle cursor-not-allowed'
+                ? 'bg-white/90 text-black hover:bg-white shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:scale-[1.02] cursor-pointer'
+                : 'bg-white/5 text-white/30 border border-white/10 cursor-not-allowed'
             }`}
           >
-            View Look
+            REVEAL LOOKBOOK →
           </button>
-
-          <p className="text-tryonity-subtle text-sm text-center">
-            Kiosk URL: <span className="text-tryonity-muted">{kioskUrl}</span>
-          </p>
         </div>
       </div>
     </div>
@@ -128,34 +131,30 @@ function IdleState({ onSubmit }: { onSubmit: (code: string) => void }) {
 // ─── Processing State ─────────────────────────────────────────────────────────
 function ProcessingState({ code }: { code: string }) {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-10">
-      <div className="relative w-28 h-28">
-        <div className="absolute inset-0 border-4 border-tryonity-accent/15 rounded-full" />
-        <div className="absolute inset-0 border-4 border-tryonity-accent border-t-transparent rounded-full animate-spin" />
-        <div className="absolute inset-3 border-4 border-tryonity-accent/10 rounded-full" />
-        <div className="absolute inset-3 border-4 border-tryonity-accent/40 border-t-transparent rounded-full animate-spin [animation-direction:reverse] [animation-duration:0.7s]" />
+    <div className="flex flex-col items-center justify-center h-full gap-10 bg-[#070708] text-white">
+      <div className="relative w-32 h-32 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+        <div className="absolute inset-0 rounded-full border-2 border-white border-t-transparent animate-spin" />
+        <div className="absolute inset-4 rounded-full border-2 border-white/25 border-t-transparent animate-spin [animation-direction:reverse] [animation-duration:0.8s]" />
+        <span className="w-4 h-4 rounded-full bg-white animate-pulse" />
       </div>
 
-      <div className="text-center">
-        <h2 className="text-white text-5xl font-bold mb-3">Generating your look...</h2>
-        <p className="text-tryonity-muted text-2xl">This usually takes about 8 seconds</p>
+      <div className="text-center space-y-3">
+        <h2 className="font-serif text-4xl lg:text-5xl font-light tracking-[0.18em] uppercase text-white">
+          SYNTHESIZING NEURAL <span className="italic font-serif">FITTING</span>...
+        </h2>
+        <p className="text-white/40 text-lg font-light tracking-widest">ESTIMATED LATENCY: ~8 SECONDS</p>
       </div>
 
-      <div className="px-8 py-4 bg-tryonity-surface border border-tryonity-border rounded-3xl">
-        <p className="text-tryonity-subtle text-base mb-1 text-center">Code</p>
-        <p className="text-white text-3xl font-bold tracking-[0.35em] tabular-nums">{code}</p>
-      </div>
-
-      <div className="flex gap-2.5">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="w-2.5 h-2.5 bg-tryonity-accent rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-        ))}
+      <div className="px-10 py-5 bg-white/3 border border-white/8 rounded-[2.5rem] text-center backdrop-blur-xl shadow-2xl">
+        <p className="text-[10px] text-white/40 tracking-[0.25em] uppercase mb-1 font-mono">SESSION CODE</p>
+        <p className="font-mono text-3xl font-bold tracking-[0.35em] text-white tabular-nums">{code}</p>
       </div>
     </div>
   );
 }
 
-// ─── Result State ─────────────────────────────────────────────────────────────
+// ─── Result State (Photographic Campaign Backdrop) ──────────────────
 function ResultState({ code, imageUrl, expiresAt, onReset }: {
   code: string; imageUrl: string; expiresAt: Date; onReset: () => void;
 }) {
@@ -186,80 +185,128 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
   };
 
   return (
-    <div className="relative h-full bg-black">
-      {/* Full-screen scrollable image gallery */}
-      <div 
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
+    <div className="relative w-full h-full flex items-center justify-center p-6 select-none overflow-hidden" style={{ background: '#070708' }}>
+      
+      {/* ── LAYER 1: Full Fashion Editorial Photo Background (high opacity, contrasty, landing page style) ── */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2564&auto=format&fit=crop')",
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          opacity: 0.35,
+          filter: 'grayscale(100%) brightness(35%) contrast(120%)',
+        }}
+      />
+
+      {/* ── LAYER 2: Spotlight Vignette Overlay ── */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          background: 'radial-gradient(circle at 50% 45%, transparent 20%, #070708 95%)',
+        }}
+      />
+      
+      {/* ── LAYER 3: Vertical Blueprint Guidelines ── */}
+      <div className="absolute inset-0 flex justify-between pointer-events-none z-0 px-24">
+        <div className="w-px h-full bg-gradient-to-b from-transparent via-white/[0.06] to-transparent" />
+        <div className="w-px h-full bg-gradient-to-b from-transparent via-white/[0.06] to-transparent" />
+        <div className="w-px h-full bg-gradient-to-b from-transparent via-white/[0.06] to-transparent" />
+      </div>
+
+      {/* ── LAYER 4: Giant Serif Campaign Typography Backdrop ── */}
+      <div className="absolute inset-0 flex flex-col justify-between p-16 select-none pointer-events-none z-0 font-serif">
+        <div className="text-[13vw] leading-none uppercase tracking-[0.25em] text-white/[0.03] font-light">
+          HAUTE
+        </div>
+        <div className="text-[13vw] leading-none uppercase tracking-[0.25em] text-white/[0.03] text-right font-light italic">
+          COUTURE
+        </div>
+      </div>
+      
+      {/* ── LAYER 5: Fine Dot grid overlay ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
+
+      {/* ── MAIN SHOWCASE IMAGE — FULL-HEIGHT (ASPECT 3:4 OR FIT) ── */}
+      <div
+        className="relative h-[92vh] aspect-[3/4] max-w-full rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-10"
+        style={{
+          boxShadow: '0 30px 80px rgba(0,0,0,0.9)',
+          background: 'rgba(255, 255, 255, 0.03)',
+        }}
       >
-        {urls.map((url, i) => (
-          <div key={url} className="w-full h-full flex-shrink-0 snap-center flex items-center justify-center relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={`Look ${i + 1}`} className="max-h-screen max-w-full object-contain" />
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation Arrows */}
-      {urls.length > 1 && (
-        <>
-          <button 
-            onClick={() => scrollTo(Math.max(0, idx - 1))}
-            disabled={idx === 0}
-            className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-tryonity-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
-          </button>
-          <button 
-            onClick={() => scrollTo(Math.min(urls.length - 1, idx + 1))}
-            disabled={idx === urls.length - 1}
-            className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/50 hover:bg-tryonity-accent text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border-2 border-white/20 hover:border-black hover:text-black"
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
-          </button>
-        </>
-      )}
-
-      {/* Top gradient */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none z-20" />
-
-      {/* Tryonity top label */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30">
-        {urls.length > 1 && (
-          <div className="bg-[#ffde59] text-black text-xs font-black px-3 py-1 uppercase tracking-widest rounded-full shadow-lg">
-            Look {idx + 1} of {urls.length}
-          </div>
-        )}
-        <div className="flex items-center gap-2 mt-1">
-          <div className="w-2.5 h-2.5 bg-tryonity-accent rounded-full" />
-          <span className="text-white text-sm font-bold uppercase tracking-widest opacity-80 shadow-black drop-shadow-md">Tryonity Result</span>
-          <div className="w-2.5 h-2.5 bg-tryonity-accent rounded-full" />
-        </div>
-      </div>
-
-      {/* Bottom gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-20" />
-
-      {/* Bottom overlay */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 z-30">
-        <div className="bg-black/70 backdrop-blur-sm border border-tryonity-border/50 rounded-2xl px-6 py-4 text-right">
-          <p className="text-tryonity-subtle text-xs mb-1">Code</p>
-          <p className="text-white font-bold text-2xl tabular-nums tracking-widest">{code}</p>
-          <p className={`text-xs font-medium mt-1 tabular-nums ${timeLeft > 60000 ? 'text-tryonity-muted' : 'text-amber-400'}`}>
-            {formatCountdown(timeLeft)} remaining
-          </p>
-        </div>
-
-        <button
-          id="kiosk-try-another-btn"
-          type="button"
-          onClick={onReset}
-          className="bg-tryonity-accent hover:bg-tryonity-accent-hover text-white font-bold px-10 py-5 rounded-2xl
-                     transition-all duration-200 hover:scale-[1.02] shadow-2xl shadow-blue-600/30 text-xl"
+        {/* Fullscreen Horizontal Swipe Gallery */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
         >
-          Try Another Look
-        </button>
+          {urls.map((url, i) => (
+            <div key={url} className="w-full h-full flex-shrink-0 snap-center flex items-center justify-center relative bg-black/40">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt={`Look ${i + 1}`} className="w-full h-full object-cover" />
+            </div>
+          ))}
+        </div>
+
+        {/* ── TOP HEADER FLOATING OVERLAY ── */}
+        <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between pointer-events-none">
+          <div className="flex flex-col bg-black/50 backdrop-blur-md px-6 py-3.5 rounded-full border border-white/10">
+            <span className="text-[8px] font-mono tracking-[0.25em] text-white/40 uppercase">TRYONITY HAUTE COUTURE</span>
+            <span className="text-sm font-serif font-light tracking-widest text-[#fdfbf7] uppercase">Virtual Fitting</span>
+          </div>
+          {urls.length > 1 && (
+            <div className="bg-white text-black text-[9px] font-mono font-medium px-5 py-2.5 uppercase tracking-[0.2em] rounded-full shadow-2xl">
+              LOOK {idx + 1} OF {urls.length} — COMPOSITE
+            </div>
+          )}
+        </div>
+
+        {/* ── NAVIGATION ARROWS (Floating inside image viewport edges) ── */}
+        {urls.length > 1 && (
+          <>
+            <button
+              onClick={() => scrollTo(Math.max(0, idx - 1))}
+              disabled={idx === 0}
+              className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/85 hover:bg-white text-white hover:text-black rounded-full flex items-center justify-center backdrop-blur-md transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border border-white/15 shadow-2xl"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button
+              onClick={() => scrollTo(Math.min(urls.length - 1, idx + 1))}
+              disabled={idx === urls.length - 1}
+              className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/85 hover:bg-white text-white hover:text-black rounded-full flex items-center justify-center backdrop-blur-md transition-all disabled:opacity-0 disabled:pointer-events-none z-30 border border-white/15 shadow-2xl"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </button>
+          </>
+        )}
+
+        {/* ── BOTTOM CONTROL OVERLAY ── */}
+        <div className="absolute bottom-6 left-6 right-6 z-20 flex items-center justify-between gap-6">
+          {/* Access Info tag */}
+          <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-[1.5rem] px-5 py-3 text-left">
+            <span className="text-[8px] font-mono tracking-widest text-white/30 block mb-0.5">SESSION TIMER</span>
+            <span className="text-[10px] font-mono text-white/80 uppercase">Code: <span className="font-bold text-white tracking-widest">{code}</span></span>
+            <span className="block text-[9px] font-mono text-white/30 mt-0.5">Expires in: {formatCountdown(timeLeft)}</span>
+          </div>
+
+          {/* Reset Action Button */}
+          <button
+            id="kiosk-try-another-btn"
+            type="button"
+            onClick={onReset}
+            className="px-8 py-4.5 rounded-full text-xs font-bold uppercase tracking-[0.2em] bg-white text-black hover:bg-white/90 shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+          >
+            Try Another Look
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -268,24 +315,23 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
 // ─── Error State ──────────────────────────────────────────────────────────────
 function ErrorState({ message, onReset }: { message: string; onReset: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-8">
-      <div className="w-24 h-24 bg-red-950/30 border border-red-800/50 rounded-full flex items-center justify-center">
-        <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="flex flex-col items-center justify-center h-full gap-8 bg-[#070708] text-white">
+      <div className="w-24 h-24 rounded-full border border-red-500/30 bg-red-500/10 flex items-center justify-center">
+        <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
         </svg>
       </div>
-      <div className="text-center">
-        <h2 className="text-white text-4xl font-bold mb-3">{message}</h2>
-        <p className="text-tryonity-muted text-xl">Check the code on your phone and try again</p>
+      <div className="text-center space-y-2">
+        <h2 className="font-serif text-3xl font-light uppercase tracking-[0.18em] text-red-500">{message}</h2>
+        <p className="text-white/40 text-sm tracking-widest font-light">Please check the access code on your mobile device and try again.</p>
       </div>
       <button
         id="kiosk-try-again-btn"
         type="button"
         onClick={onReset}
-        className="bg-tryonity-surface hover:bg-tryonity-surface2 text-white font-bold px-12 py-5 rounded-2xl
-                   transition-all duration-200 border border-tryonity-border text-xl"
+        className="px-8 py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] border border-white/20 text-white hover:bg-white/10"
       >
-        Try Again
+        TRY AGAIN →
       </button>
     </div>
   );
@@ -326,13 +372,12 @@ export default function KioskPage() {
       } else if (data.status === 'not_found' || data.status === 'expired' || data.status === 'error') {
         stopPolling();
         setErrorMsg(
-          data.status === 'expired' ? 'Session has expired'
-          : data.status === 'error' ? 'Generation failed — please try again'
-          : 'Code not found or expired'
+          data.status === 'expired' ? 'Session Has Expired'
+          : data.status === 'error' ? 'Generation Failed — Please Try Again'
+          : 'Code Not Found or Expired'
         );
         setState('error');
       }
-      // 'processing' → keep polling
     } catch {
       console.error('[kiosk] Poll error — retrying...');
     }
@@ -348,13 +393,13 @@ export default function KioskPage() {
   useEffect(() => () => stopPolling(), [stopPolling]);
 
   return (
-    <div className="w-screen h-screen bg-black overflow-hidden" style={{ position: 'fixed', inset: 0 }}>
+    <div className="w-screen h-screen bg-[#070708] overflow-hidden" style={{ position: 'fixed', inset: 0 }}>
       {state === 'idle'       && <IdleState onSubmit={handleCodeSubmit} />}
       {state === 'processing' && <ProcessingState code={code} />}
       {state === 'result'     && imageUrl && expiresAt && (
         <ResultState code={code} imageUrl={imageUrl} expiresAt={expiresAt} onReset={reset} />
       )}
-      {state === 'error'      && <ErrorState message={errorMsg || 'Code not found or expired'} onReset={reset} />}
+      {state === 'error'      && <ErrorState message={errorMsg || 'Code Not Found or Expired'} onReset={reset} />}
     </div>
   );
 }

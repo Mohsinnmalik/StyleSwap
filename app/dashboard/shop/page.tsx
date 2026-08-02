@@ -22,10 +22,10 @@ export default async function ShopSettingsPage() {
     : null;
 
   return (
-    <div className="max-w-2xl animate-fade-in">
-      <div className="mb-6">
-        <h1 className="page-title">Shop Settings</h1>
-        <p className="text-tryonity-muted text-sm mt-1">Manage your shop info and download your customer QR code</p>
+    <div className="max-w-4xl mx-auto animate-fade-in relative z-10 p-0 md:p-8">
+      <div className="flex flex-col items-center text-center mb-16 border-b-[3px] border-white pb-8">
+        <h1 className="font-mono text-5xl md:text-6xl font-black text-white uppercase tracking-tight mb-4">ATELIER CONFIG</h1>
+        <p className="text-sm font-mono font-bold tracking-widest uppercase text-white/70 bg-white/10 px-4 py-2 border-[3px] border-white/30">MANAGE DETAILS & EXPORT QR</p>
       </div>
       <ShopSettingsClient key={serialized?._id ?? 'empty'} shop={serialized} />
     </div>

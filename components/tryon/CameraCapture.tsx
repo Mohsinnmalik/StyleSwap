@@ -113,32 +113,48 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Take a photo">
-      <div className="w-full max-w-lg bg-tryonity-bg border-4 border-black shadow-neo-lg flex flex-col">
+    <div className="fixed inset-0 z-50 bg-[#08080a]/90 backdrop-blur-2xl flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Take a photo">
+      <div className="w-full max-w-lg bg-[#0f0f13] border border-[#d4af37]/30 rounded-3xl shadow-luxury-glow flex flex-col overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b-4 border-black bg-white">
-          <p className="text-black text-lg font-black uppercase tracking-widest">Take a Photo</p>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#d4af37]/20 bg-[#08080a]/80">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#d4af37] animate-pulse" />
+            <p className="font-serif font-light text-sm uppercase tracking-[0.25em] text-[#fbfbfa]">Haute Couture Camera Studio</p>
+          </div>
           <button
             type="button"
             onClick={handleClose}
             aria-label="Close camera"
-            className="w-10 h-10 bg-white border-4 border-black flex items-center justify-center shadow-neo-sm hover:bg-tryonity-error hover:-translate-y-0.5 transition-all"
+            className="w-9 h-9 rounded-full bg-white/5 border border-[#d4af37]/30 text-white hover:border-[#d4af37] hover:text-[#d4af37] flex items-center justify-center transition-all"
           >
-            <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Viewfinder */}
-        <div className="relative aspect-[3/4] w-full bg-black overflow-hidden">
+        <div className="relative aspect-[3/4] w-full bg-[#08080a] overflow-hidden">
+          {/* Hairline Gold Framing Grid Overlay */}
+          <div className="absolute inset-0 pointer-events-none z-10 grid grid-cols-3 grid-rows-3 border border-[#d4af37]/20">
+            <div className="border-r border-b border-[#d4af37]/15" />
+            <div className="border-r border-b border-[#d4af37]/15" />
+            <div className="border-b border-[#d4af37]/15" />
+            <div className="border-r border-b border-[#d4af37]/15" />
+            <div className="border-r border-b border-[#d4af37]/15" />
+            <div className="border-b border-[#d4af37]/15" />
+            <div className="border-r border-[#d4af37]/15" />
+            <div className="border-r border-[#d4af37]/15" />
+            <div className="" />
+          </div>
+
           {error ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
-              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center z-20">
+              <svg className="w-12 h-12 text-[#ff5757]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-white font-bold">{error}</p>
+              <p className="text-white text-sm font-light leading-relaxed max-w-xs">{error}</p>
             </div>
           ) : (
             <>
@@ -150,51 +166,55 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
                 className={`w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''}`}
               />
               {!ready && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-white font-black uppercase tracking-widest animate-pulse">Starting camera...</p>
+                <div className="absolute inset-0 flex items-center justify-center bg-[#08080a] z-20">
+                  <p className="font-serif text-sm uppercase tracking-[0.25em] text-[#d4af37] animate-pulse">Initializing Studio Optics...</p>
                 </div>
               )}
               {countdown !== null && countdown > 0 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <p className="text-white text-8xl font-black">{countdown}</p>
+                <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#08080a]/60 backdrop-blur-sm">
+                  <div className="w-32 h-32 rounded-full border-2 border-[#d4af37] flex items-center justify-center shadow-luxury-glow animate-ping">
+                    <span className="font-serif text-7xl font-light text-[#f3e5ab]">{countdown}</span>
+                  </div>
                 </div>
               )}
             </>
           )}
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-between px-5 py-4 bg-white border-t-4 border-black">
+        {/* Controls Bar */}
+        <div className="flex items-center justify-between px-8 py-6 bg-[#08080a] border-t border-[#d4af37]/20">
           <button
             type="button"
             onClick={() => setFacingMode((m) => (m === 'user' ? 'environment' : 'user'))}
             disabled={!!error}
             aria-label="Switch camera"
-            className="w-12 h-12 bg-white border-4 border-black flex items-center justify-center shadow-neo-sm hover:bg-tryonity-accent hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-12 h-12 rounded-full bg-white/5 border border-[#d4af37]/30 text-[#d4af37] hover:border-[#d4af37] flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
 
+          {/* Metallic Gold Circular Shutter Button */}
           <button
             type="button"
             onClick={startCapture}
             disabled={!ready || !!error || countdown !== null}
             aria-label="Capture photo"
-            className={`w-16 h-16 rounded-full border-4 border-black flex items-center justify-center transition-all ${
+            className={`w-20 h-20 rounded-full border-2 border-[#d4af37] flex items-center justify-center transition-all ${
               ready && !error && countdown === null
-                ? 'bg-tryonity-accent shadow-neo hover:-translate-y-1 hover:shadow-neo-lg active:translate-y-0.5 active:shadow-none'
-                : 'bg-gray-300 cursor-not-allowed'
+                ? 'bg-[#d4af37]/20 shadow-luxury-glow hover:scale-105 active:scale-95 cursor-pointer'
+                : 'bg-gray-800/40 border-gray-700 cursor-not-allowed opacity-40'
             }`}
           >
-            <div className="w-8 h-8 rounded-full bg-black" />
+            <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#d4af37] via-[#e5c158] to-[#f3e5ab] shadow-luxury-gold" />
           </button>
 
-          {/* Spacer to balance layout */}
+          {/* Balance layout */}
           <div className="w-12 h-12" />
         </div>
       </div>
     </div>
   );
 }
+

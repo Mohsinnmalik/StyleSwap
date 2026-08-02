@@ -1,24 +1,31 @@
 import type { Metadata } from 'next';
+import { Cinzel, Inter } from 'next/font/google';
 import './globals.css';
 
+const cinzel = Cinzel({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-cinzel',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
-  title: { default: 'Tryonity — Virtual Try-On', template: '%s | Tryonity' },
-  description: 'AI-powered virtual try-on for clothing showrooms. See how any outfit looks on you before buying.',
+  title: { default: 'Tryonity — Neural Fitting', template: '%s | Tryonity' },
+  description: 'The future of virtual haute couture and personal styling.',
   keywords: ['virtual try-on', 'AI fashion', 'clothing', 'showroom'],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="bg-tryonity-bg text-tryonity-text antialiased">{children}</body>
+    <html lang="en" className={`${cinzel.variable} ${inter.variable}`}>
+      <body className="antialiased bg-black text-white selection:bg-white/30">{children}</body>
     </html>
   );
 }

@@ -38,10 +38,10 @@ function UploadZone({
   const [dragging, setDragging] = useState(false);
 
   return (
-    <div className="w-full flex flex-col gap-2">
-      <div className="flex flex-col">
-        <p className="text-tryonity-text text-lg font-black tracking-widest uppercase">{label}</p>
-        <p className="text-tryonity-subtle text-sm font-bold mt-0.5">{hint}</p>
+    <div className="w-full flex flex-col gap-3">
+      <div className="flex flex-col px-1">
+        <p className="font-serif text-lg font-light tracking-[0.2em] uppercase text-[#fdfbf7]">{label}</p>
+        <p className="text-white/40 text-xs font-light tracking-wide mt-0.5">{hint}</p>
       </div>
 
       <button
@@ -55,38 +55,40 @@ function UploadZone({
           if (f) onSelect(f);
         }}
         disabled={disabled}
-        className={`relative w-full rounded-neo transition-all duration-150 overflow-hidden group ${
+        className={`relative w-full rounded-[2.5rem] transition-all duration-300 overflow-hidden group ${
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
         } ${
-          preview ? 'border-4 border-tryonity-border shadow-neo' :
-          dragging ? 'border-4 border-tryonity-border bg-tryonity-accent border-dashed shadow-neo'
-          : error ? 'border-4 border-tryonity-error bg-red-100 shadow-neo'
-          : 'border-4 border-tryonity-border bg-[#ffffff] hover:bg-tryonity-accent hover:-translate-y-1 hover:shadow-neo transition-all'
+          preview ? 'border border-white shadow-[0_0_20px_rgba(255,255,255,0.15)]' :
+          dragging ? 'border border-white bg-white/5 border-dashed'
+          : error ? 'border border-red-500 bg-red-500/5'
+          : 'border border-white/10 bg-white/3 backdrop-blur-xl hover:border-white/30 hover:bg-white/5'
         }`}
       >
         {preview ? (
-          <div className="relative aspect-[3/4] w-full bg-white">
+          <div className="relative aspect-[3/4] w-full bg-black">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={preview} alt="Preview" className="w-full h-full object-cover grayscale-[20%] contrast-125" />
-            <div className="absolute inset-0 bg-tryonity-accent opacity-0 group-hover:opacity-20 transition-opacity duration-150 flex items-end justify-center pb-6">
-              <p className="text-black text-sm font-black uppercase tracking-wider px-4 py-2 bg-white border-4 border-black shadow-neo-sm">Tap to change</p>
+            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <p className="px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] border border-white/30 bg-black/50 text-white hover:bg-black">
+                Tap to change portrait
+              </p>
             </div>
-            <div className="absolute top-4 right-4 w-10 h-10 bg-white border-4 border-black rounded-neo flex items-center justify-center shadow-neo-sm hover:-translate-y-1 hover:shadow-neo transition-all">
-              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/80 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-14 gap-4 px-6">
-            <div className={`w-16 h-16 rounded-neo flex items-center justify-center border-4 border-black transition-colors duration-150 bg-white shadow-neo-sm`}>
-              <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          <div className="flex flex-col items-center justify-center py-16 gap-4 px-6 text-center">
+            <div className="w-16 h-16 rounded-full border border-white/15 bg-white/5 flex items-center justify-center text-white/70">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
             </div>
-            <div className="text-center">
-              <p className="text-black text-lg font-black uppercase tracking-wider">Upload Image</p>
-              <p className="text-black font-bold text-sm mt-1">JPG, PNG, WebP (Max 5MB)</p>
+            <div>
+              <p className="font-serif text-base font-light uppercase tracking-[0.18em] text-[#fdfbf7]">Upload Portrait</p>
+              <p className="text-[10px] text-white/30 font-mono tracking-widest mt-1">JPG, PNG, WEBP (MAX 5MB)</p>
             </div>
           </div>
         )}
@@ -109,15 +111,15 @@ function UploadZone({
           type="button"
           onClick={onCameraClick}
           disabled={disabled}
-          className={`w-full py-3 flex items-center justify-center gap-3 border-4 border-black rounded-neo bg-white text-black text-base font-black uppercase tracking-wider shadow-neo-sm transition-all ${
-            disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-tryonity-accent hover:-translate-y-0.5 hover:shadow-neo active:translate-y-0.5 active:shadow-none'
+          className={`w-full py-4 flex items-center justify-center gap-3 border border-white/20 rounded-full bg-white/3 text-[#fdfbf7] text-[10px] font-bold tracking-[0.2em] uppercase transition-all backdrop-blur-md ${
+            disabled ? 'opacity-40 cursor-not-allowed' : 'hover:border-white hover:bg-white/10'
           }`}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          {preview ? 'Retake with Camera' : 'Take a Photo'}
+          {preview ? 'Retake with Live Camera' : 'Open Live Webcam Studio'}
         </button>
       )}
     </div>
@@ -140,7 +142,6 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
   const productImg = preselectedProduct?.images.find((i) => i.is_primary)?.url
     ?? preselectedProduct?.images[0]?.url ?? '';
 
-  // Revoke object URLs when previews change or on unmount
   useEffect(() => () => { if (personPreview) URL.revokeObjectURL(personPreview); }, [personPreview]);
   useEffect(() => () => { if (clothPreview) URL.revokeObjectURL(clothPreview); }, [clothPreview]);
 
@@ -170,9 +171,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
     setCameraTarget(null);
   }, [cameraTarget, handleFileSelect]);
 
-  // Multi-mode: one product per person photo
   const isMultiMode = !!multiProducts && multiProducts.length > 1;
-
   const canSubmit = !!personFile && (!!preselectedProduct || isMultiMode || !!clothFile) && !submitting;
 
   const handleSubmit = async () => {
@@ -180,7 +179,6 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
     setSubmitting(true);
     setSubmitError(null);
 
-    // Append selected product(s) or uploaded cloth
     const fd = new FormData();
     fd.append('shop_id', shopId);
     fd.append('person_image', personFile!);
@@ -208,60 +206,92 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
       return;
     }
 
-    // Always route to single session page (which now supports one code with multiple results)
     router.push(`/shop/${shopSlug}/session?code=${data.code}`);
   };
 
   // Loading screen while submitting
   if (submitting) {
     return (
-      <div className="min-h-screen bg-tryonity-bg flex flex-col items-center justify-center gap-8 px-4">
-        <div className="relative w-32 h-32 border-8 border-black shadow-neo-lg bg-white flex items-center justify-center">
-          <div className="absolute inset-0 border-8 border-tryonity-accent animate-spin-slow" style={{ animationDuration: '4s' }} />
-          <p className="text-black font-black text-2xl uppercase animate-pulse">Wait</p>
+      <div className="min-h-screen bg-[#070708] text-white flex flex-col items-center justify-center gap-8 px-4">
+        <div className="relative w-28 h-28 rounded-full border border-white/20 bg-white/5 flex items-center justify-center shadow-2xl">
+          <div className="absolute inset-0 rounded-full border-2 border-white border-t-transparent animate-spin" />
+          <span className="w-4 h-4 rounded-full bg-white animate-pulse" />
         </div>
-        <div className="text-center">
-          <h2 className="text-tryonity-text text-4xl font-black uppercase tracking-tighter">Processing...</h2>
-          <p className="text-tryonity-subtle text-lg font-bold mt-3 max-w-xs mx-auto border-2 border-black bg-white p-2 shadow-neo-sm">Our AI is rendering your look.</p>
+        <div className="text-center space-y-3">
+          <h2 className="font-serif text-3xl md:text-4xl font-light uppercase tracking-[0.2em] text-[#fdfbf7]">
+            Synthesizing <span className="italic font-serif">Couture</span>...
+          </h2>
+          <p className="text-xs text-white/40 font-mono tracking-widest max-w-xs mx-auto">
+            Google Vertex AI is rendering your tailored virtual composite.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-tryonity-bg text-tryonity-text pb-24 font-sans">
-      
-      {/* Centered Mobile-like container for desktop */}
-      <div className="max-w-4xl mx-auto w-full min-h-screen flex flex-col relative bg-tryonity-surface border-x-4 border-tryonity-border shadow-neo">
+    <div
+      className="min-h-screen text-[#fbfbfa] pb-24 font-sans selection:bg-white/30"
+      style={{ background: '#070708' }} // Pure landing page obsidian black
+    >
+      {/* ── BACKGROUND LAYER: Fashion editorial photo blurred ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2564&auto=format&fit=crop')",
+          backgroundPosition: 'center 20%',
+          backgroundSize: 'cover',
+          opacity: 0.18,
+          filter: 'grayscale(100%) brightness(35%) contrast(110%) blur(4px)',
+        }}
+      />
+
+      {/* ── BACKGROUND LAYER 2: Dot grid ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px)',
+          backgroundSize: '30px 30px',
+        }}
+      />
+
+      <div className="max-w-4xl mx-auto w-full min-h-screen flex flex-col relative border-x border-white/8 shadow-2xl z-10 bg-[#070708]/85 backdrop-blur-md">
         
         {/* Sticky Header */}
-        <header className="sticky top-0 z-20 px-5 pt-8 pb-4 flex items-center justify-between bg-tryonity-bg border-b-4 border-tryonity-border shadow-neo-sm">
+        <header className="sticky top-0 z-20 px-6 py-6 flex items-center justify-between border-b border-white/8 bg-[#070708]/90 backdrop-blur-xl">
           <div className="flex items-center gap-4">
-            <Link href={`/shop/${shopSlug}`} className="btn-icon">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+            <Link href={`/shop/${shopSlug}`} className="w-10 h-10 rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-white hover:border-white transition-all">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
             <div>
-              <p className="text-tryonity-accent text-xs font-black uppercase tracking-widest border-b-2 border-black inline-block">Tryonity AI</p>
-              <h1 className="text-tryonity-text text-2xl font-black uppercase tracking-tighter">Virtual Try-On</h1>
+              <span className="text-[9px] font-mono tracking-[0.25em] uppercase text-white/40 block">Haute Couture Studio</span>
+              <h1 className="font-serif text-2xl font-light uppercase tracking-[0.15em] text-[#fdfbf7]">
+                Virtual <span className="italic font-serif">Fitting</span>
+              </h1>
             </div>
           </div>
         </header>
 
-        <div className="px-5 pt-8 pb-10 flex flex-col gap-10 flex-1">
+        <div className="px-6 py-8 flex flex-col gap-10 flex-1">
           
           {/* Multi-product banner */}
           {isMultiMode && multiProducts && (
-            <div className="card p-4 bg-[#ffffff]">
-              <p className="text-tryonity-accent text-xs uppercase font-black tracking-widest mb-2 border-b-2 border-black inline-block">Trying {multiProducts.length} Items</p>
-              <div className="flex gap-3 overflow-x-auto">
+            <div
+              className="rounded-[2.5rem] p-6 space-y-4 border border-white/8"
+              style={{ background: 'rgba(255, 255, 255, 0.03)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}
+            >
+              <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-white/40 bg-white/5 border border-white/12 px-4 py-1 rounded-full inline-block">
+                STYLING {multiProducts.length} COUTURE PIECES
+              </span>
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
                 {multiProducts.map((prod) => {
                   const img = prod.images.find((i) => i.is_primary)?.url ?? prod.images[0]?.url ?? '';
                   return (
-                    <div key={prod._id} className="flex-shrink-0 flex flex-col items-center gap-1">
-                      {img && <div className="w-14 h-14 border-4 border-black shadow-neo-sm overflow-hidden"><Image src={img} alt={prod.name} width={56} height={56} className="w-full h-full object-cover" /></div>}
-                      <p className="text-black text-xs font-black uppercase text-center max-w-[56px] truncate">{prod.name}</p>
+                    <div key={prod._id} className="flex-shrink-0 flex flex-col items-center gap-2">
+                      {img && <div className="w-16 h-20 rounded-xl border border-white/10 overflow-hidden"><Image src={img} alt={prod.name} width={64} height={80} className="w-full h-full object-cover" /></div>}
+                      <p className="text-[9px] font-mono tracking-widest text-white/40 uppercase text-center max-w-[64px] truncate">{prod.name}</p>
                     </div>
                   );
                 })}
@@ -269,105 +299,88 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
             </div>
           )}
 
-          {/* Pre-selected product banner (single mode) */}
+          {/* Single Product banner */}
           {preselectedProduct && (
-            <div className="card p-4 flex items-center gap-4 bg-[#ffffff]">
-              {productImg && (
-                <div className="w-16 h-16 border-4 border-black flex-shrink-0 bg-white shadow-neo-sm">
-                  <Image src={productImg} alt={preselectedProduct.name} width={64} height={64} className="w-full h-full object-cover grayscale-[10%]" />
+            <div
+              className="rounded-[2rem] p-5 flex items-center justify-between gap-4 border border-white/8"
+              style={{ background: 'rgba(255, 255, 255, 0.03)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                {productImg && (
+                  <div className="w-14 h-16 rounded-xl border border-white/10 overflow-hidden flex-shrink-0">
+                    <Image src={productImg} alt={preselectedProduct.name} width={56} height={64} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-white/40 block mb-0.5">Selected Garment</span>
+                  <p className="font-serif text-lg font-light uppercase tracking-wider text-[#fdfbf7] truncate">{preselectedProduct.name}</p>
                 </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-tryonity-accent text-xs uppercase font-black tracking-widest mb-1 border-b-2 border-black inline-block">Selected</p>
-                <p className="text-black font-black text-lg truncate uppercase">{preselectedProduct.name}</p>
               </div>
-              <Link href={`/shop/${shopSlug}`} className="px-4 py-2 bg-white border-4 border-black shadow-neo-sm text-black text-sm font-black uppercase hover:bg-tryonity-accent hover:shadow-neo hover:-translate-y-0.5 active:translate-y-0.5 transition-all">
+              <Link
+                href={`/shop/${shopSlug}`}
+                className="px-5 py-2.5 border border-white/20 text-white rounded-full text-[9px] font-bold tracking-[0.2em] uppercase hover:bg-white/10"
+              >
                 Change
               </Link>
             </div>
           )}
 
-          <div className="flex flex-col gap-10">
+          {/* Dual Dropzone Interface */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Step 1 — Person photo */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-tryonity-accent border-4 border-black flex items-center justify-center shadow-neo-sm rounded-neo">
-                  <span className="text-black text-xl font-black">1</span>
-                </div>
-                <h2 className="text-tryonity-text text-3xl font-black uppercase tracking-tighter">Your Photo</h2>
-              </div>
-              <UploadZone
-                label="Full Body Image"
-                hint="Good lighting, facing forward."
-                preview={personPreview}
-                error={personError}
-                onSelect={(f) => handleFileSelect(f, setPersonFile, setPersonPreview, setPersonError)}
-                onCameraClick={() => setCameraTarget('person')}
-                disabled={submitting}
-              />
-            </div>
+            <UploadZone
+              label="1. PORTRAIT CAPTURE"
+              hint="High lighting, full body or half body."
+              preview={personPreview}
+              error={personError}
+              onSelect={(f) => handleFileSelect(f, setPersonFile, setPersonPreview, setPersonError)}
+              onCameraClick={() => setCameraTarget('person')}
+              disabled={submitting}
+            />
 
             {/* Step 2 — Cloth (only if no pre-selected) */}
             {!preselectedProduct && (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#00cc00] border-4 border-black flex items-center justify-center shadow-neo-sm rounded-neo">
-                    <span className="text-black text-xl font-black">2</span>
-                  </div>
-                  <h2 className="text-tryonity-text text-3xl font-black uppercase tracking-tighter">Garment</h2>
-                </div>
-                <UploadZone
-                  label="Flat or Hanger"
-                  hint="Clear view of the clothing item."
-                  preview={clothPreview}
-                  error={clothError}
-                  onSelect={(f) => handleFileSelect(f, setClothFile, setClothPreview, setClothError)}
-                  onCameraClick={() => setCameraTarget('cloth')}
-                  disabled={submitting}
-                />
-              </div>
+              <UploadZone
+                label="2. GARMENT REFERENCE"
+                hint="Flat lay photo of clothing item."
+                preview={clothPreview}
+                error={clothError}
+                onSelect={(f) => handleFileSelect(f, setClothFile, setClothPreview, setClothError)}
+                onCameraClick={() => setCameraTarget('cloth')}
+                disabled={submitting}
+              />
             )}
           </div>
 
           {/* Submit error */}
           {submitError && (
-            <div className="flex items-start gap-3 px-5 py-4 bg-tryonity-error border-4 border-black shadow-neo">
-              <svg className="w-6 h-6 text-black flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/20 text-red-400 text-xs font-mono tracking-wider uppercase flex items-center gap-3">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-black text-base font-bold uppercase">{submitError}</p>
+              {submitError}
             </div>
           )}
         </div>
 
         {/* Sticky Bottom Action Bar */}
-        <div className="sticky bottom-0 z-20 p-5 bg-tryonity-bg border-t-4 border-tryonity-border shadow-[0_-4px_0_0_rgba(0,0,0,1)]">
+        <div className="sticky bottom-0 z-20 p-6 border-t border-white/8 bg-[#070708]/90 backdrop-blur-xl">
           <button
             id="generate-tryon-btn"
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className={`w-full py-4 flex items-center justify-center gap-3 text-lg font-black uppercase tracking-wider transition-all duration-150 border-4 border-black rounded-neo ${
-              canSubmit 
-                ? 'bg-tryonity-accent text-black shadow-neo hover:shadow-neo-lg hover:-translate-y-1 active:translate-y-1 active:shadow-none'
-                : 'bg-[#d1d5db] text-gray-500 shadow-none cursor-not-allowed'
+            className={`w-full py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-3 ${
+              canSubmit
+                ? 'bg-white/90 text-black hover:bg-white shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
+                : 'bg-white/5 text-white/30 border border-white/10 cursor-not-allowed'
             }`}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            Generate
+            GENERATE VIRTUAL FITTING RENDER →
           </button>
-          
-          {!canSubmit && !submitting && (
-            <p className="text-center text-tryonity-border text-sm font-black uppercase tracking-wider mt-4">
-              {!personFile
-                ? 'Upload photo to continue'
-                : !preselectedProduct && !isMultiMode && !clothFile
-                ? 'Upload garment to continue'
-                : ''}
-            </p>
-          )}
         </div>
 
       </div>
