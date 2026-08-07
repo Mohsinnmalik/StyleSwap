@@ -28,6 +28,22 @@ const ai = new GoogleGenAI({
  * Fetches an image from a URL and converts it to a Base64 string and MIME type.
  */
 async function fetchImageAsBase64(url: string): Promise<{ data: string; mimeType: string }> {
+  // Handle local files (like seeded demo products)
+  if (url.startsWith('/')) {
+    const filePath = path.join(process.cwd(), 'public', url);
+    const buffer = fs.readFileSync(filePath);
+    const ext = path.extname(filePath).toLowerCase();
+    let mimeType = 'image/jpeg';
+    if (ext === '.png') mimeType = 'image/png';
+    else if (ext === '.webp') mimeType = 'image/webp';
+    
+    return {
+      data: buffer.toString('base64'),
+      mimeType,
+    };
+  }
+
+  // Handle external URLs (like Cloudinary uploads)
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch image from ${url}`);
@@ -82,7 +98,7 @@ export async function generateTryOnImage(
         },
         config: { 
           numberOfImages: 1,
-          baseSteps: 75 
+          baseSteps: 120 
         },
       });
 
