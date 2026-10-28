@@ -12,7 +12,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   await connectDB();
   const shop = (await Shop.findOne({ slug: params.slug, is_active: true }).lean()) as unknown as IShop | null;
-  return { title: shop ? `${shop.name} — Design My Attire` : 'Design My Attire' };
+  return { title: shop ? `${shop.name} â€” Design My Attire` : 'Design My Attire' };
 }
 
 export default async function DesignAttirePage({ params }: Props) {

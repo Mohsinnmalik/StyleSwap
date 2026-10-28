@@ -243,7 +243,7 @@ export default function DesignAttireClient({ shop, products }: Props) {
 
         <h1 className="text-lg md:text-xl font-serif uppercase tracking-widest text-[#fdfbf7] flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          {shop.name} — Design My Attire
+          {shop.name} â€” Design My Attire
         </h1>
       </header>
 
