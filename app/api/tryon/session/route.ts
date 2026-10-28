@@ -5,8 +5,6 @@ import { isValidCode } from '@/lib/utils';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
-  // Generous limit (legit clients poll every ~3s) that still makes
-  // brute-forcing the 6-digit code space impractical.
   const rl = checkRateLimit(getClientIp(request), {
     bucket: 'session-lookup',
     windowMs: 60 * 1000,
@@ -31,7 +29,6 @@ export async function GET(request: NextRequest) {
 
     if (!session) return NextResponse.json({ status: 'not_found' });
 
-    // Check expiry
     if (new Date() > session.expires_at && session.status !== 'expired') {
       await TryonSession.updateOne({ session_code: code }, { status: 'expired' });
       return NextResponse.json({ status: 'expired' });
@@ -45,17 +42,18 @@ export async function GET(request: NextRequest) {
 
     if (session.status === 'done') {
       return NextResponse.json({
-        status:    'done',
-        image_url: session.result_image_url,
-        expires_at: session.expires_at.toISOString(),
+        status:           'done',
+        image_url:        session.result_image_url,
+        result_image_url: session.result_image_url,
+        expires_at:       session.expires_at.toISOString(),
         person_image_url: session.person_image.url,
         cloth_image_url:  session.cloth_source.image_url,
       });
     }
 
     return NextResponse.json({
-      status:    'processing',
-      expires_at: session.expires_at.toISOString(),
+      status:           'processing',
+      expires_at:       session.expires_at.toISOString(),
       person_image_url: session.person_image.url,
       cloth_image_url:  session.cloth_source.image_url,
     });

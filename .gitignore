@@ -7,5 +7,6 @@ dist-seed
 
 # Google Cloud Service Account Keys
 astral-adapter*.json
+smiling-rhythm*.json
 *-*.json
 *service-account*.json

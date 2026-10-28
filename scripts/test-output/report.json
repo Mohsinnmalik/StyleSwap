@@ -1,0 +1,72 @@
+[
+  {
+    "name": "2-Piece: Kurta + Trouser",
+    "ok": false,
+    "steps": [
+      {
+        "step": 1,
+        "label": "Kurta (base)",
+        "elapsed": 34.9,
+        "ok": true,
+        "file": "t1_2piece_1_kurta.jpg"
+      },
+      {
+        "step": 2,
+        "label": "Trouser (bottom)",
+        "elapsed": null,
+        "ok": false,
+        "error": "{\"error\":{\"code\":500,\"message\":\"Internal error encountered.\",\"status\":\"INTERNAL\"}}"
+      }
+    ],
+    "total": 38.9
+  },
+  {
+    "name": "3-Piece Jodhpuri: Kurta + Trouser + Blazer",
+    "ok": false,
+    "steps": [
+      {
+        "step": 1,
+        "label": "Kurta (base)",
+        "elapsed": 30.2,
+        "ok": true,
+        "file": "t2_jodhpuri_1_kurta.jpg"
+      },
+      {
+        "step": 2,
+        "label": "Trouser (bottom)",
+        "elapsed": null,
+        "ok": false,
+        "error": "{\"error\":{\"code\":500,\"message\":\"Internal error encountered.\",\"status\":\"INTERNAL\"}}"
+      }
+    ],
+    "total": 32.4
+  },
+  {
+    "name": "3-Piece Suit: Shirt + Trousers + Waistcoat",
+    "ok": true,
+    "steps": [
+      {
+        "step": 1,
+        "label": "Shirt (base)",
+        "elapsed": 30.2,
+        "ok": true,
+        "file": "t3_suit_1_shirt.jpg"
+      },
+      {
+        "step": 2,
+        "label": "Black Trousers (bottom)",
+        "elapsed": 31.9,
+        "ok": true,
+        "file": "t3_suit_2_black.jpg"
+      },
+      {
+        "step": 3,
+        "label": "Waistcoat (middle layer)",
+        "elapsed": 31.7,
+        "ok": true,
+        "file": "t3_suit_3_waistcoat.jpg"
+      }
+    ],
+    "total": 93.9
+  }
+]

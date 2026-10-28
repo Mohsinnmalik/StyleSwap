@@ -41,32 +41,17 @@ export default function CatalogueClient({ shop, products, initialProducts, categ
   };
 
   return (
-    <div
-      className="min-h-screen text-white font-sans selection:bg-white/30 pb-36 animate-fade-in relative overflow-x-hidden"
-      style={{ background: '#070708' }} // Pure landing page obsidian black
-    >
-      {/* ── BACKGROUND LAYER: Fashion editorial photo blurred ── */}
+    <div className="min-h-screen bg-[#070708] text-[#fdfbf7] font-sans relative overflow-x-hidden pb-28">
+      {/* Background ambient lighting grid */}
       <div
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2564&auto=format&fit=crop')",
-          backgroundPosition: 'center 20%',
-          backgroundSize: 'cover',
-          opacity: 0.18,
-          filter: 'grayscale(100%) brightness(35%) contrast(110%) blur(4px)',
-        }}
-      />
-
-      {/* ── BACKGROUND LAYER 2: Paper Dot texture ── */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0"
+        className="fixed inset-0 pointer-events-none opacity-40"
         style={{
           backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px)',
           backgroundSize: '30px 30px',
         }}
       />
 
-      {/* ── Header ── */}
+      {/* Header */}
       <header
         className="sticky top-0 z-50 backdrop-blur-3xl px-8 py-6 flex items-center justify-between shadow-[0_10px_40px_rgba(0,0,0,0.8)]"
         style={{
@@ -82,15 +67,51 @@ export default function CatalogueClient({ shop, products, initialProducts, categ
           <p className="text-[9px] font-mono text-white/40 tracking-[0.25em] uppercase mt-1">Showroom Catalogue</p>
         </div>
         
-        <Link
-          href={`/shop/${shop.slug}/session`}
-          className="px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-[0.18em] border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
-        >
-          Pair Session 📱
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/shop/${shop.slug}/design-attire`}
+            className="px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-[0.18em] bg-white text-black hover:bg-white/90 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>?</span> Design My Attire
+          </Link>
+          <Link
+            href={`/shop/${shop.slug}/session`}
+            className="px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-[0.18em] border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+          >
+            Pair Session ??
+          </Link>
+        </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-8 py-10 space-y-10 relative z-10">
+        {/* Luxury Hero Banner for Design My Attire */}
+        <div
+          className="p-8 md:p-10 rounded-[2.5rem] border border-white/15 backdrop-blur-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+          }}
+        >
+          <div className="space-y-2 text-center md:text-left">
+            <span className="text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-white/50 border border-white/15 px-3 py-1 rounded-full">
+              New Customer Experience
+            </span>
+            <h2 className="text-2xl md:text-3xl font-serif uppercase tracking-widest text-[#fdfbf7]">
+              Design My Attire
+            </h2>
+            <p className="text-xs font-mono text-white/60 max-w-lg">
+              Combine fabrics and garments, specify what each piece is for, and visualize your complete custom attire.
+            </p>
+          </div>
+
+          <Link
+            href={`/shop/${shop.slug}/design-attire`}
+            className="px-8 py-4 rounded-full text-xs font-bold uppercase tracking-[0.2em] bg-white text-black hover:bg-white/90 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.25)] flex-shrink-0 cursor-pointer"
+          >
+            Start Designing ?
+          </Link>
+        </div>
+
         {/* Large Touch Category Ribbon */}
         <div className="flex gap-3 overflow-x-auto scrollbar-none py-2">
           {['ALL', ...categoryList].map((cat) => (
@@ -186,7 +207,7 @@ export default function CatalogueClient({ shop, products, initialProducts, categ
                         href={`/shop/${shop.slug}/tryon?product=${prod._id}`}
                         className="w-full text-[10px] font-bold uppercase tracking-[0.2em] py-4 rounded-full bg-white/90 text-black hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2"
                       >
-                        Touch to try on →
+                        Touch to try on ?
                       </Link>
                     </div>
                   </div>
@@ -213,7 +234,7 @@ export default function CatalogueClient({ shop, products, initialProducts, categ
             href={`/shop/${shop.slug}/tryon?products=${selectedIds.join(',')}`}
             className="px-6 py-3.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.15)] flex-shrink-0"
           >
-            Try On Outfit →
+            Try On Outfit ?
           </Link>
         </div>
       )}
