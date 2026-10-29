@@ -87,7 +87,7 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
       const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' });
       stopStream();
       onCapture(file);
-    }, 'image/jpeg', 0.92);
+    }, 'image/jpeg', 0.98);
   }, [facingMode, onCapture, stopStream]);
 
   // 3-2-1 countdown, then snap

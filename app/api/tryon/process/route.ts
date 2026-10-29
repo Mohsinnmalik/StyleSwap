@@ -77,10 +77,12 @@ export async function POST(request: NextRequest) {
     const shop = await Shop.findById(shopId).lean() as unknown as IShop | null;
     if (!shop) return NextResponse.json({ error: 'Shop not found.' }, { status: 404 });
 
-    // Upload person image to Cloudinary
+    // Upload person image to Cloudinary with explicit MIME preservation
     const personBuf = Buffer.from(await personImage.arrayBuffer());
     const date      = new Date().toISOString().slice(0, 10);
-    const { url: personUrl, public_id: personPubId } = await uploadImage(personBuf, `tryon-sessions/${date}`);
+    const { url: personUrl, public_id: personPubId } = await uploadImage(personBuf, `tryon-sessions/${date}`, {
+      mimeType: personImage.type || 'image/jpeg',
+    });
 
     // Determine cloth image URLs
     let clothImageUrls: string[] = [];
@@ -105,9 +107,11 @@ export async function POST(request: NextRequest) {
       }
       firstProductId = products[0]._id.toString();
     } else {
-      // Upload own cloth image
+      // Upload own cloth image with explicit MIME preservation
       const clothBuf = Buffer.from(await (clothImageF as File).arrayBuffer());
-      const { url, public_id } = await uploadImage(clothBuf, `tryon-sessions/${date}`);
+      const { url, public_id } = await uploadImage(clothBuf, `tryon-sessions/${date}`, {
+        mimeType: (clothImageF as File).type || 'image/jpeg',
+      });
       clothImageUrls = [url];
       clothPublicId = public_id;
     }

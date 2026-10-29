@@ -19,14 +19,30 @@ const ai = new GoogleGenAI({
   location: process.env.GOOGLE_CLOUD_LOCATION || 'us-central1',
 });
 
+// Virtual Try-On generation settings
+// Higher diffusion baseSteps prioritize micro-texture and fabric detail at higher processing latency.
+// Adjust this value (e.g., 32-120) if tuning the latency vs quality trade-off in the future.
+const VTO_BASE_STEPS = 120;
+
+function detectMimeType(buffer: Buffer, headerMime?: string | null): string {
+  if (buffer.length >= 4 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47) {
+    return 'image/png';
+  }
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return 'image/jpeg';
+  }
+  const cleanHeader = (headerMime || '').split(';')[0].trim().toLowerCase();
+  if (cleanHeader === 'image/png' || cleanHeader === 'image/jpeg') {
+    return cleanHeader;
+  }
+  return 'image/jpeg';
+}
+
 async function fetchImageAsBase64(url: string): Promise<{ data: string; mimeType: string }> {
   if (url.startsWith('/')) {
     const filePath = path.join(process.cwd(), 'public', url);
     const buffer = fs.readFileSync(filePath);
-    const ext = path.extname(filePath).toLowerCase();
-    let mimeType = 'image/jpeg';
-    if (ext === '.png') mimeType = 'image/png';
-    else if (ext === '.webp') mimeType = 'image/webp';
+    const mimeType = detectMimeType(buffer);
     
     return {
       data: buffer.toString('base64'),
@@ -36,11 +52,11 @@ async function fetchImageAsBase64(url: string): Promise<{ data: string; mimeType
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch image from ${url}`);
+    throw new Error(`Failed to fetch image from ${url} (status: ${response.status})`);
   }
   const arrayBuffer = await response.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
-  const mimeType = response.headers.get('content-type') || 'image/jpeg';
+  const mimeType = detectMimeType(buffer, response.headers.get('content-type'));
   return {
     data: buffer.toString('base64'),
     mimeType,
@@ -48,7 +64,8 @@ async function fetchImageAsBase64(url: string): Promise<{ data: string; mimeType
 }
 
 /**
- * Generates a virtual try-on image using Vertex AI's single garment model (UNTOUCHED).
+ * Generates a virtual try-on image using Vertex AI's virtual-try-on-001 model
+ * with optimal diffusion steps, lossless PNG output, and faithful fabric rendering.
  */
 export async function generateTryOnImage(
   sessionCode: string,
@@ -62,10 +79,15 @@ export async function generateTryOnImage(
     const personImage = await fetchImageAsBase64(personImageUrl);
     const modelName = process.env.VERTEX_AI_MODEL || 'virtual-try-on-001';
 
-    const finalImageUrls = await Promise.all(clothImageUrls.map(async (clothUrl, idx) => {
+    const finalImageUrls: string[] = [];
+
+    // Execute sequentially to respect Vertex AI concurrency limits and avoid 500 INTERNAL collisions
+    for (let idx = 0; idx < clothImageUrls.length; idx++) {
+      const clothUrl = clothImageUrls[idx];
       console.log(`[vertex-ai-vto] Item ${idx + 1}/${clothImageUrls.length}: Fetching ${clothUrl}`);
       const clothImage = await fetchImageAsBase64(clothUrl);
       console.log(`[vertex-ai-vto] Calling ${modelName} for item ${idx + 1}...`);
+
       const response = await ai.models.recontextImage({
         model: modelName,
         source: {
@@ -84,18 +106,20 @@ export async function generateTryOnImage(
         },
         config: { 
           numberOfImages: 1,
-          baseSteps: 120 
+          baseSteps: VTO_BASE_STEPS,
+          outputMimeType: 'image/png',
         },
       });
 
       const base64Data = response.generatedImages?.[0]?.image?.imageBytes;
       if (!base64Data) throw new Error('Vertex AI did not return generated image bytes.');
 
-      const dataUri = `data:image/jpeg;base64,${base64Data}`;
+      const outputMime = response.generatedImages?.[0]?.image?.mimeType || 'image/png';
+      const dataUri = `data:${outputMime};base64,${base64Data}`;
       const date = new Date().toISOString().slice(0, 10);
       const { url: finalImageUrl } = await uploadImage(dataUri, `tryon-sessions/results/${date}`);
-      return finalImageUrl;
-    }));
+      finalImageUrls.push(finalImageUrl);
+    }
 
     console.log(`[vertex-ai-vto] Session ${sessionCode} success in ${Date.now() - startTime}ms. Updating MongoDB.`);
     await connectDB();
@@ -210,10 +234,13 @@ export async function generateAttireImage(
     const candidate = response.candidates?.[0];
     let base64Data: string | undefined = undefined;
 
+    let outputMime = 'image/png';
+
     if (candidate?.content?.parts) {
       for (const part of candidate.content.parts) {
         if (part.inlineData?.data) {
           base64Data = part.inlineData.data;
+          outputMime = part.inlineData.mimeType || 'image/png';
           break;
         }
       }
@@ -224,7 +251,7 @@ export async function generateAttireImage(
       throw new Error('Gemini model did not return image bytes for attire design.');
     }
 
-    const dataUri = `data:image/jpeg;base64,${base64Data}`;
+    const dataUri = `data:${outputMime};base64,${base64Data}`;
     const date = new Date().toISOString().slice(0, 10);
     const { url: finalImageUrl } = await uploadImage(dataUri, `tryon-sessions/results/${date}`);
 

@@ -10,3 +10,4 @@ astral-adapter*.json
 smiling-rhythm*.json
 *-*.json
 *service-account*.json
+vercel.env

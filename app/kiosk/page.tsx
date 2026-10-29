@@ -162,6 +162,23 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
   const urls = imageUrl.split(',').filter(Boolean);
   const [idx, setIdx] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [aspectRatio, setAspectRatio] = useState<string>('16 / 9');
+
+  useEffect(() => {
+    if (urls[idx]) {
+      const img = new window.Image();
+      img.src = urls[idx];
+      if (img.complete && img.naturalWidth && img.naturalHeight) {
+        setAspectRatio(`${img.naturalWidth} / ${img.naturalHeight}`);
+      } else {
+        img.onload = () => {
+          if (img.naturalWidth && img.naturalHeight) {
+            setAspectRatio(`${img.naturalWidth} / ${img.naturalHeight}`);
+          }
+        };
+      }
+    }
+  }, [urls, idx]);
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -233,10 +250,11 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
         }}
       />
 
-      {/* ── MAIN SHOWCASE IMAGE — FULL-HEIGHT (ASPECT 3:4 OR FIT) ── */}
+      {/* ── MAIN SHOWCASE IMAGE — HORIZONTAL DISPLAY WITH ADAPTIVE RATIO ── */}
       <div
-        className="relative h-[92vh] aspect-[3/4] max-w-full rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-10"
+        className="relative h-[88vh] max-w-[94vw] w-auto rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-10 flex items-center justify-center transition-all duration-300"
         style={{
+          aspectRatio,
           boxShadow: '0 30px 80px rgba(0,0,0,0.9)',
           background: 'rgba(255, 255, 255, 0.03)',
         }}
@@ -248,9 +266,19 @@ function ResultState({ code, imageUrl, expiresAt, onReset }: {
           className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
         >
           {urls.map((url, i) => (
-            <div key={url} className="w-full h-full flex-shrink-0 snap-center flex items-center justify-center relative bg-black/40">
+            <div key={url} className="w-full h-full flex-shrink-0 snap-center flex items-center justify-center relative bg-gradient-to-b from-black/60 via-transparent to-black/70">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt={`Look ${i + 1}`} className="w-full h-full object-cover" />
+              <img
+                src={url}
+                alt={`Look ${i + 1}`}
+                onLoad={(e) => {
+                  const { naturalWidth, naturalHeight } = e.currentTarget;
+                  if (naturalWidth && naturalHeight) {
+                    setAspectRatio(`${naturalWidth} / ${naturalHeight}`);
+                  }
+                }}
+                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+              />
             </div>
           ))}
         </div>
