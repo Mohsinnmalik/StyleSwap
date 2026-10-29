@@ -330,7 +330,7 @@ export default function TryOnClient({ shopSlug, shopId, preselectedProduct, mult
             {/* Step 1 — Person photo */}
             <UploadZone
               label="1. PORTRAIT CAPTURE"
-              hint="High lighting, full body or half body."
+              hint="1 Person Only (centered, good lighting, head to waist)."
               preview={personPreview}
               error={personError}
               onSelect={(f) => handleFileSelect(f, setPersonFile, setPersonPreview, setPersonError)}

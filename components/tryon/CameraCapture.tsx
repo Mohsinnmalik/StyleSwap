@@ -66,9 +66,30 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
     const video = videoRef.current;
     if (!video || !streamRef.current) return;
 
+    // Viewfinder aspect ratio is 3:4 portrait (0.75)
+    // We MUST crop the webcam stream to match exactly what is visible in the viewfinder
+    // so any side persons, background clutter, or off-center elements are completely excluded.
+    const targetAspect = 3 / 4;
+    const videoAspect = video.videoWidth / video.videoHeight;
+
+    let sx = 0;
+    let sy = 0;
+    let sw = video.videoWidth;
+    let sh = video.videoHeight;
+
+    if (videoAspect > targetAspect) {
+      // Wide webcam stream (e.g. 16:9 or 4:3) - crop left & right borders equally
+      sw = video.videoHeight * targetAspect;
+      sx = (video.videoWidth - sw) / 2;
+    } else {
+      // Tall stream - crop top & bottom equally
+      sh = video.videoWidth / targetAspect;
+      sy = (video.videoHeight - sh) / 2;
+    }
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = Math.round(sw);
+    canvas.height = Math.round(sh);
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -77,7 +98,13 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
     }
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Draw only the exact center 3:4 region shown in the viewfinder
+    ctx.drawImage(
+      video,
+      sx, sy, sw, sh,
+      0, 0, canvas.width, canvas.height
+    );
 
     canvas.toBlob((blob) => {
       if (!blob) {
@@ -147,6 +174,20 @@ export default function CameraCapture({ onCapture, onClose }: Props) {
             <div className="border-r border-[#d4af37]/15" />
             <div className="border-r border-[#d4af37]/15" />
             <div className="" />
+          </div>
+
+          {/* Centering Face & Body Silhouette Guide */}
+          <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center">
+            {/* Top Helper Badge */}
+            <div className="absolute top-3.5 px-4 py-1.5 rounded-full bg-black/80 border border-[#d4af37]/40 shadow-xl backdrop-blur-md">
+              <span className="text-[10px] font-mono tracking-widest text-[#f5ecd5] uppercase">
+                👤 1 Person Only • Center Head & Torso
+              </span>
+            </div>
+            {/* Head oval guide */}
+            <div className="w-28 h-36 rounded-[50%] border-2 border-dashed border-[#d4af37]/35 -mt-6" />
+            {/* Shoulder arch guide */}
+            <div className="w-56 h-20 border-t-2 border-dashed border-[#d4af37]/25 rounded-t-[2.5rem] mt-2" />
           </div>
 
           {error ? (
