@@ -20,9 +20,12 @@ const ai = new GoogleGenAI({
 });
 
 // Virtual Try-On generation settings
-// Higher diffusion baseSteps prioritize micro-texture and fabric detail at higher processing latency.
-// Adjust this value (e.g., 32-120) if tuning the latency vs quality trade-off in the future.
-const VTO_BASE_STEPS = 120;
+// CRITICAL FOR FACE & BODY PRESERVATION:
+// baseSteps is set to 32 (Google's official calibrated default for virtual-try-on-001).
+// Setting baseSteps higher (e.g. 120) causes the diffusion denoising schedule to over-sample,
+// which drifts away from the conditioning personImage, mutating facial features and altering body proportions.
+// 32 steps strictly locks the conditioning latent to the original customer face, facial features, and body structure.
+const VTO_BASE_STEPS = 32;
 
 function detectMimeType(buffer: Buffer, headerMime?: string | null): string {
   if (buffer.length >= 4 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47) {
@@ -169,13 +172,21 @@ export async function generateAttireImage(
       clothes.map((c) => fetchImageAsBase64(c.image_url))
     );
 
-    // 3. Formulate structured semantic prompt
+    // 3. Formulate structured semantic prompt with strict face & body locks
     const attireTitle = inferredAttire || 'Custom Attire';
-    let promptText = `STRICT FASHION EDITORIAL INSTRUCTIONS - IDENTITY PRESERVATION & ATTIRE SYNTHESIS\n\n`;
-    promptText += `IMAGE 1 IS THE IMMUTABLE CUSTOMER IDENTITY REFERENCE.\n`;
-    promptText += `- The person in Image 1 is the customer.\n`;
-    promptText += `- MANDATE: Preserve the customer's identity as closely as technically possible. The customer's uploaded photograph is the highest-priority identity reference. The customer's face, facial structure, skin tone, hair, apparent age, and overall physical identity must remain as faithful as technically possible.\n`;
-    promptText += `- DO NOT invent a new face. DO NOT replace the person in Image 1. NEVER use the face/identity of a catalogue model or mannequin. NEVER beautify or redesign the customer's face.\n\n`;
+    let promptText = `STRICT FASHION EDITORIAL INSTRUCTIONS - ABSOLUTE FACE & BODY PRESERVATION\n\n`;
+    promptText += `IMAGE 1 IS THE IMMUTABLE CUSTOMER IDENTITY & BODY REFERENCE.\n`;
+    promptText += `- The person in Image 1 is the customer. THIS IDENTITY IS SACROSANCT.\n`;
+    promptText += `- MANDATE 1: 100% IDENTICAL FACE & HEAD REPLICATION.\n`;
+    promptText += `  * The face, facial structure, jawline, chin, nose, lips, mouth, eyes, eye shape, eye color, eyelids, eyebrows, forehead, ears, hairline, hair color, hair style, hair texture, skin tone, skin undertone, natural skin texture, moles, blemishes, facial lines, and apparent age MUST BE AN EXACT, UNMISTAKABLE REPLICA of Image 1.\n`;
+    promptText += `  * ACCESSORIES: If the customer wears glasses or eyewear in Image 1, retain the exact glasses.\n`;
+    promptText += `  * STRICT PROHIBITION: DO NOT alter, beautify, airbrush, slim down, morph, or regenerate the customer's face. DO NOT replace the customer with a generic model, an AI face, or any model/mannequin seen in the clothing images.\n\n`;
+    promptText += `- MANDATE 2: EXACT BODY SIZE, BUILD, AND PROPORTIONS.\n`;
+    promptText += `  * The customer's exact body size, frame, build, weight, and body type (slim, average, athletic, broad, plus-size, etc.) MUST REMAIN ABSOLUTELY IDENTICAL to Image 1.\n`;
+    promptText += `  * ZERO RESHAPING: Absolutely NO artificial body slimming, NO waist thinning, NO muscle bulking, NO torso elongation, NO altering shoulder width, chest width, hip width, arm thickness, or neck width. The body mass and physical type of the customer in Image 1 must be perfectly preserved.\n`;
+    promptText += `  * The clothes must drape and fit naturally over the customer's REAL, UNALTERED body shape.\n\n`;
+    promptText += `- MANDATE 3: BODY GESTURE, STANCE, AND POSTURE.\n`;
+    promptText += `  * Maintain the natural body gesture, stance, and orientation of the customer from Image 1. You may adjust the posture slightly only as needed to showcase the designed attire elegantly, but the customer's natural presence, pose, and gesture must feel genuine, authentic, and true to the person in Image 1.\n\n`;
     promptText += `THE REMAINING IMAGES ARE CLOTHING/MATERIAL REFERENCES ONLY:\n`;
 
     clothes.forEach((c, idx) => {
@@ -197,12 +208,12 @@ export async function generateAttireImage(
     });
 
     promptText += `\n\nCOMPOSITION & RENDER MANDATES:
-1. CUSTOMER IDENTITY & FACE: The output photo MUST feature the SAME CUSTOMER as Image 1 with faithful facial features, skin tone, and hair.
-2. BODY STRUCTURE & FIT: Retain the customer's natural body structure and produce garments that physically fit that body. Preserve realistic shoulder placement, neck position, torso length, waist, hips, arms, hands, legs, sleeve length, garment overlap, natural folds, fabric tension, and occlusion.
-3. AVOID DISTORTION: Avoid distorted anatomy, extra/missing limbs, floating garments, garments clipping through the body, incorrect waist placement, impossible proportions, and generic fashion-model replacement. Do not unnecessarily change the customer's pose.
+1. CUSTOMER IDENTITY & FACE LOCK: The output image MUST feature the EXACT SAME CUSTOMER from Image 1. Retain 100% of their unique facial identity, facial structure, skin tone, eye characteristics, and hair.
+2. BODY SIZE, BUILD & GESTURE LOCK: Retain the customer's natural body size, body type, weight, and gesture. Do not alter their body frame or slim down their waist or shoulders. Garments must realistically fit over their actual physical form.
+3. AVOID DISTORTION: Avoid distorted anatomy, extra/missing limbs, floating garments, garments clipping through the body, incorrect waist placement, impossible proportions, and generic fashion-model replacement.
 4. NO INVENTED GARMENTS OR COLOR DRIFT: Use ONLY the supplied garment/fabric references for their assigned roles. Do not change colors or add unrequested clothing items.
 5. PHOTOREALISM: Target a believable photograph of the SAME CUSTOMER wearing the selected attire. Prioritize natural skin, realistic fabric folds, natural garment tension, correct lighting and shadows, and realistic depth. Avoid plastic skin, AI faces, CGI appearance, or excessive beautification.
-6. FULL-BODY PORTRAIT: Output exactly ONE photorealistic, studio-grade full-body fashion portrait of the customer in Image 1 wearing the complete designed attire: "${attireTitle}".`;
+6. FULL-BODY PORTRAIT: Output exactly ONE photorealistic, studio-grade fashion portrait of the customer in Image 1 wearing the complete designed attire: "${attireTitle}".`;
 
     // 4. Formulate multimodal request parts
     const contentsParts: any[] = [
